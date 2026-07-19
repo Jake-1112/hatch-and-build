@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hatch & Build</title>
+<style>
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #F4EBD9;
+    font-family: -apple-system, "Helvetica Neue", "Arial Rounded MT Bold", "Segoe UI", sans-serif;
+    color: #463C30;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    padding: 64px 20px 48px;
+  }
+
+  .bg-glow {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 12%, rgba(237,167,56,0.20), transparent 38%),
+      radial-gradient(circle at 88% 82%, rgba(157,179,137,0.18), transparent 38%);
+    z-index: 0;
+  }
+
+  .dots {
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(70,60,48,0.10) 3px, transparent 3px);
+    background-size: 44px 44px;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 460px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .egg {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+
+  h1 .accent {
+    color: #EDA738;
+  }
+
+  .tagline {
+    font-size: 15px;
+    font-weight: 600;
+    color: #9a8d76;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #f0e4cf;
+    border: 1px solid rgba(70,60,48,0.08);
+    border-radius: 20px;
+    padding: 22px 24px;
+    box-shadow: 0 10px 30px rgba(70,60,48,0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .card:active {
+    transform: scale(0.98);
+  }
+
+  .card-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #DB7E6E;
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    font-weight: 500;
+    color: #6f6252;
+    margin-bottom: 14px;
+  }
+
+  .card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #463C30;
+  }
+
+  .card-cta::after {
+    content: "→";
+    transition: transform 0.15s ease;
+  }
+
+  .card:hover .card-cta::after {
+    transform: translateX(3px);
+  }
+
+  .card.coming-soon {
+    background: transparent;
+    border: 1.5px dashed rgba(70,60,48,0.22);
+    box-shadow: none;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .card.coming-soon .card-title {
+    color: #9a8d76;
+    font-size: 15px;
+    margin: 0;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 44px;
+  }
+
+  footer a {
+    color: #9a8d76;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+</style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="dots"></div>
+
+  <div class="page">
+    <header>
+      <span class="egg">🐣</span>
+      <h1>Hatch <span class="accent">&</span> Build</h1>
+      <p class="tagline">Ideas hatched, built, and shipped</p>
+    </header>
+
+    <div class="projects">
+      <a class="card" href="https://apps.apple.com/kr/app/gugu-group-challenge/id6788447196" target="_blank" rel="noopener">
+        <div class="card-label">Project #1</div>
+        <div class="card-title">GuGu: Group Challenge</div>
+        <div class="card-desc">A group challenge app to build habits with friends</div>
+        <div class="card-cta">Download on the App Store</div>
+      </a>
+
+      <a class="card" href="https://kids-drawing-wall-1.onrender.com" target="_blank" rel="noopener">
+        <div class="card-label">Project #2</div>
+        <div class="card-title">Drawing Playground</div>
+        <div class="card-desc">An online drawing wall made for kids</div>
+        <div class="card-cta">Visit the site</div>
+      </a>
+
+      <div class="card coming-soon">
+        <div class="card-title">Project #3 — coming soon</div>
+      </div>
+    </div>
+
+    <footer>
+      <a href="#" id="ig-link">Hatch & Build</a>
+    </footer>
+  </div>
+</body>
+</html>
