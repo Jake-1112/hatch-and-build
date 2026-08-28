@@ -716,6 +716,66 @@
     background: #eee1c9;
   }
 
+  /* Cropper. Cards are 16:9 and crop from the centre, so a tall phone
+     screenshot loses its top and bottom unless the uploader picks the slice. */
+
+  .modal-crop {
+    display: none;
+    position: relative;
+    margin: 6px auto 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #eee1c9;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    line-height: 0;
+  }
+
+  .modal-crop.on { display: block; }
+
+  .modal-crop canvas { display: block; }
+
+  .crop-box {
+    position: absolute;
+    box-shadow: 0 0 0 9999px rgba(70,60,48,0.55);
+    outline: 2px solid #F4EBD9;
+    cursor: move;
+  }
+
+  .crop-box::before {
+    content: "";
+    position: absolute;
+    left: 33.333%;
+    right: 33.333%;
+    top: 0;
+    bottom: 0;
+    border-left: 1px solid rgba(244,235,217,0.5);
+    border-right: 1px solid rgba(244,235,217,0.5);
+    pointer-events: none;
+  }
+
+  .crop-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #F4EBD9;
+    border: 2px solid #463C30;
+    border-radius: 6px;
+  }
+
+  .crop-handle[data-h="nw"] { left: -2px;  top: -2px;    cursor: nwse-resize; }
+  .crop-handle[data-h="ne"] { right: -2px; top: -2px;    cursor: nesw-resize; }
+  .crop-handle[data-h="sw"] { left: -2px;  bottom: -2px; cursor: nesw-resize; }
+  .crop-handle[data-h="se"] { right: -2px; bottom: -2px; cursor: nwse-resize; }
+
+  .crop-hint {
+    font-size: 12px;
+    color: #8a7c66;
+    margin: 6px 0 0;
+    line-height: 1.5;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .card.reveal { opacity: 1; transform: none; }
     .wall-item { animation: none; }
@@ -838,6 +898,16 @@
       <input type="text" id="editCta" maxlength="40">
       <label for="editImage">Photo</label>
       <img class="modal-preview" id="editPreview" src="" alt="">
+      <div class="modal-crop" id="editCrop">
+        <canvas id="editCropCanvas"></canvas>
+        <div class="crop-box" id="editCropBox">
+          <div class="crop-handle" data-h="nw"></div>
+          <div class="crop-handle" data-h="ne"></div>
+          <div class="crop-handle" data-h="sw"></div>
+          <div class="crop-handle" data-h="se"></div>
+        </div>
+      </div>
+      <p class="crop-hint" id="editCropHint" hidden>Drag to move, corners to resize. The card shows exactly the bright area.</p>
       <input type="file" id="editImage" accept="image/*">
       <div class="modal-error" id="editError"></div>
       <div class="modal-actions">
@@ -999,6 +1069,164 @@
     var editingIdx = null;
     var pendingProjectImage = null;
 
+    // ---- photo cropper ----
+    // A card's photo box is 16:9 and crops from the centre, so a tall phone
+    // screenshot silently loses its top and bottom. Let the uploader pick the
+    // slice instead of finding out after saving.
+    var CARD_ASPECT = 16 / 9;
+    var CROP_OUT_WIDTH = 1200;
+    var CROP_MIN = 24;
+
+    var editCrop = document.getElementById('editCrop');
+    var cropCanvas = document.getElementById('editCropCanvas');
+    var cropBox = document.getElementById('editCropBox');
+    var cropHint = document.getElementById('editCropHint');
+    var cropSrc = null;    // { bitmap, w, h } in natural pixels
+    var cropRect = null;   // chosen area, also natural pixels
+    var cropScale = 1;     // natural px -> on-screen px
+
+    function decodeViaImg(file) {
+      return new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = function () { resolve(img); };
+        img.onerror = function () { reject(new Error('decode')); };
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    function decodeImage(file) {
+      // createImageBitmap applies EXIF rotation, so phone photos land upright.
+      if (window.createImageBitmap) {
+        try {
+          return createImageBitmap(file, { imageOrientation: 'from-image' })
+            .catch(function () { return decodeViaImg(file); });
+        } catch (e) { /* option bag unsupported */ }
+      }
+      return decodeViaImg(file);
+    }
+
+    function showCropper(on) {
+      editCrop.classList.toggle('on', on);
+      editPreview.style.display = on ? 'none' : '';
+      cropHint.hidden = !on;
+      if (!on) { cropSrc = null; cropRect = null; }
+    }
+
+    function maxCropRect() {
+      var w = cropSrc.w;
+      var h = w / CARD_ASPECT;
+      if (h > cropSrc.h) { h = cropSrc.h; w = h * CARD_ASPECT; }
+      return { x: (cropSrc.w - w) / 2, y: (cropSrc.h - h) / 2, w: w, h: h };
+    }
+
+    function cropAvailWidth() {
+      var modal = editCrop.parentNode;
+      var cs = window.getComputedStyle(modal);
+      var w = modal.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      return w > 40 ? w : 320;
+    }
+
+    function layoutCropper() {
+      if (!cropSrc) return;
+      cropScale = Math.min(cropAvailWidth() / cropSrc.w, 380 / cropSrc.h, 1);
+      var dw = Math.round(cropSrc.w * cropScale);
+      var dh = Math.round(cropSrc.h * cropScale);
+      cropCanvas.width = dw;
+      cropCanvas.height = dh;
+      editCrop.style.width = dw + 'px';
+      editCrop.style.height = dh + 'px';
+      cropCanvas.getContext('2d').drawImage(cropSrc.bitmap, 0, 0, dw, dh);
+      paintCropBox();
+    }
+
+    function paintCropBox() {
+      if (!cropRect) return;
+      cropBox.style.left = Math.round(cropRect.x * cropScale) + 'px';
+      cropBox.style.top = Math.round(cropRect.y * cropScale) + 'px';
+      cropBox.style.width = Math.round(cropRect.w * cropScale) + 'px';
+      cropBox.style.height = Math.round(cropRect.h * cropScale) + 'px';
+    }
+
+    function resizeCropRect(mode, dx, dy, o) {
+      // The corner opposite the dragged one stays put.
+      var ax = mode.indexOf('w') >= 0 ? o.x + o.w : o.x;
+      var ay = mode.indexOf('n') >= 0 ? o.y + o.h : o.y;
+      var sx = mode.indexOf('w') >= 0 ? -1 : 1;
+      var sy = mode.indexOf('n') >= 0 ? -1 : 1;
+
+      var w = o.w + sx * dx;
+      var h = o.h + sy * dy;
+      if (w / CARD_ASPECT >= h) h = w / CARD_ASPECT; else w = h * CARD_ASPECT;
+
+      var maxW = sx > 0 ? cropSrc.w - ax : ax;
+      var maxH = sy > 0 ? cropSrc.h - ay : ay;
+      if (w > maxW) { w = maxW; h = w / CARD_ASPECT; }
+      if (h > maxH) { h = maxH; w = h * CARD_ASPECT; }
+      if (w < CROP_MIN) { w = CROP_MIN; h = w / CARD_ASPECT; }
+      w = Math.min(w, maxW);
+      h = Math.min(h, maxH);
+
+      cropRect = {
+        x: sx > 0 ? ax : ax - w,
+        y: sy > 0 ? ay : ay - h,
+        w: w,
+        h: h
+      };
+    }
+
+    var cropDrag = null;
+
+    editCrop.addEventListener('pointerdown', function (e) {
+      if (!cropSrc) return;
+      var mode = e.target.getAttribute('data-h') || (e.target === cropBox ? 'move' : null);
+      if (!mode) return;
+      e.preventDefault();
+      cropDrag = { mode: mode, x: e.clientX, y: e.clientY, orig: {
+        x: cropRect.x, y: cropRect.y, w: cropRect.w, h: cropRect.h
+      } };
+      editCrop.setPointerCapture(e.pointerId);
+    });
+
+    editCrop.addEventListener('pointermove', function (e) {
+      if (!cropDrag) return;
+      var dx = (e.clientX - cropDrag.x) / cropScale;
+      var dy = (e.clientY - cropDrag.y) / cropScale;
+      if (cropDrag.mode === 'move') {
+        cropRect.x = Math.max(0, Math.min(cropDrag.orig.x + dx, cropSrc.w - cropRect.w));
+        cropRect.y = Math.max(0, Math.min(cropDrag.orig.y + dy, cropSrc.h - cropRect.h));
+      } else {
+        resizeCropRect(cropDrag.mode, dx, dy, cropDrag.orig);
+      }
+      paintCropBox();
+    });
+
+    function endCropDrag(e) {
+      if (!cropDrag) return;
+      cropDrag = null;
+      try { editCrop.releasePointerCapture(e.pointerId); } catch (err) { /* already released */ }
+    }
+    editCrop.addEventListener('pointerup', endCropDrag);
+    editCrop.addEventListener('pointercancel', endCropDrag);
+
+    window.addEventListener('resize', function () {
+      if (cropSrc && editBackdrop.classList.contains('open')) layoutCropper();
+    });
+
+    function renderCroppedImage() {
+      var outW = Math.max(1, Math.min(CROP_OUT_WIDTH, Math.round(cropRect.w)));
+      var outH = Math.round(outW / CARD_ASPECT);
+      var c = document.createElement('canvas');
+      c.width = outW;
+      c.height = outH;
+      var ctx = c.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.fillStyle = '#eee1c9';   // matte, so a transparent PNG is not black
+      ctx.fillRect(0, 0, outW, outH);
+      ctx.drawImage(cropSrc.bitmap, cropRect.x, cropRect.y, cropRect.w, cropRect.h, 0, 0, outW, outH);
+      return c.toDataURL('image/jpeg', 0.86);
+    }
+
     function openEditModal(idx) {
       editingIdx = idx;
       pendingProjectImage = null;
@@ -1011,41 +1239,43 @@
       editPreview.src = imageUrl(p.image);
       editError.textContent = '';
       editImage.value = '';
+      showCropper(false);
       editBackdrop.classList.add('open');
     }
 
     document.getElementById('editCancel').addEventListener('click', function () {
       editBackdrop.classList.remove('open');
+      showCropper(false);
     });
 
     editImage.addEventListener('change', function () {
       var file = editImage.files[0];
       if (!file) return;
-      if (file.size > 3 * 1024 * 1024) {
-        editError.textContent = 'Photo is too large (max 3MB).';
+      if (file.size > 12 * 1024 * 1024) {
+        editError.textContent = 'Photo is too large (max 12MB).';
+        editImage.value = '';
         return;
       }
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var img = new Image();
-        img.onload = function () {
-          var maxDim = 1000;
-          var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-          var w = Math.round(img.width * scale);
-          var h = Math.round(img.height * scale);
-          var c = document.createElement('canvas');
-          c.width = w; c.height = h;
-          c.getContext('2d').drawImage(img, 0, 0, w, h);
-          pendingProjectImage = c.toDataURL('image/jpeg', 0.86);
-          editPreview.src = pendingProjectImage;
+      editError.textContent = '';
+      decodeImage(file).then(function (bitmap) {
+        cropSrc = {
+          bitmap: bitmap,
+          w: bitmap.width || bitmap.naturalWidth,
+          h: bitmap.height || bitmap.naturalHeight
         };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+        cropRect = maxCropRect();
+        showCropper(true);
+        layoutCropper();
+      }).catch(function () {
+        editError.textContent = 'Could not read that image. Try a PNG or JPEG.';
+        editImage.value = '';
+        showCropper(false);
+      });
     });
 
     document.getElementById('editSave').addEventListener('click', function () {
       editError.textContent = '';
+      if (cropSrc) pendingProjectImage = renderCroppedImage();
       var body = {
         title: editTitle.value.trim(),
         native: editNative.value.trim(),
@@ -1073,6 +1303,7 @@
           projectsData = data.projects;
           renderProjects();
           editBackdrop.classList.remove('open');
+          showCropper(false);
         })
         .catch(function () { editError.textContent = 'Something went wrong. Try again.'; });
     });
