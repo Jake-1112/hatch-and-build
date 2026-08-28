@@ -59,6 +59,21 @@
     margin-bottom: 10px;
   }
 
+  /* Optional photo slots. Both are opt-in: with no <img> on the page,
+     everything renders exactly as it did before. Crop a picture with
+     tools/crop.html and paste the <img> tag it gives you. */
+
+  .logo {
+    display: block;
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 12px;
+    border-radius: 26px;
+    object-fit: cover;
+    border: 1px solid rgba(70,60,48,0.08);
+    box-shadow: 0 8px 24px rgba(70,60,48,0.12);
+  }
+
   h1 {
     font-size: 32px;
     font-weight: 800;
@@ -98,6 +113,16 @@
 
   .card:active {
     transform: scale(0.98);
+  }
+
+  .card-thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    background: rgba(70,60,48,0.06);
   }
 
   .card-label {
@@ -175,6 +200,8 @@
 
   <div class="page">
     <header>
+      <!-- Logo (optional): paste an <img class="logo" ...> tag here, and
+           delete the egg below if you want the photo to replace it. -->
       <span class="egg">🐣</span>
       <h1>Hatch <span class="accent">&</span> Build</h1>
       <p class="tagline">Ideas hatched, built, and shipped</p>
@@ -182,6 +209,7 @@
 
     <div class="projects">
       <a class="card" href="https://apps.apple.com/kr/app/gugu-group-challenge/id6788447196" target="_blank" rel="noopener">
+        <!-- Thumbnail (optional): paste an <img class="card-thumb" ...> tag here -->
         <div class="card-label">Project #1</div>
         <div class="card-title">GuGu: Group Challenge</div>
         <div class="card-desc">A group challenge app to build habits with friends</div>
@@ -189,6 +217,7 @@
       </a>
 
       <a class="card" href="https://kids-drawing-wall-1.onrender.com" target="_blank" rel="noopener">
+        <!-- Thumbnail (optional): paste an <img class="card-thumb" ...> tag here -->
         <div class="card-label">Project #2</div>
         <div class="card-title">Drawing Playground</div>
         <div class="card-desc">An online drawing wall made for kids</div>
@@ -196,6 +225,7 @@
       </a>
 
       <a class="card" href="https://dana.hatchandbuild.com" target="_blank" rel="noopener">
+        <!-- Thumbnail (optional): paste an <img class="card-thumb" ...> tag here -->
         <div class="card-label">Project #3</div>
         <div class="card-title">DANA</div>
         <div class="card-desc">Discover & book beauty salons in Dallas and Frisco</div>
@@ -203,6 +233,7 @@
       </a>
 
       <a class="card" href="https://koreanschool.hatchandbuild.com/dashboard" target="_blank" rel="noopener">
+        <!-- Thumbnail (optional): paste an <img class="card-thumb" ...> tag here -->
         <div class="card-label">Project #4</div>
         <div class="card-title">NAKS Teacher AI</div>
         <div class="card-desc">An AI assistant built for Korean school teachers</div>

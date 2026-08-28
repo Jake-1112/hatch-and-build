@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crop — Hatch &amp; Build</title>
+<style>
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #F4EBD9;
+    font-family: -apple-system, "Helvetica Neue", "Arial Rounded MT Bold", "Segoe UI", sans-serif;
+    color: #463C30;
+  }
+
+  body { padding: 40px 20px 64px; }
+
+  .wrap { max-width: 940px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 28px; }
+
+  h1 { font-size: 26px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.01em; }
+  h1 .accent { color: #EDA738; }
+
+  .tagline { font-size: 14px; font-weight: 600; color: #9a8d76; margin: 0; }
+
+  .panel {
+    background: #f0e4cf;
+    border: 1px solid rgba(70,60,48,0.08);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(70,60,48,0.08);
+  }
+
+  /* ── Drop zone ─────────────────────────────────────────────── */
+
+  #dropzone {
+    border: 1.5px dashed rgba(70,60,48,0.28);
+    border-radius: 20px;
+    padding: 56px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  #dropzone:hover, #dropzone.over {
+    border-color: #EDA738;
+    background: rgba(237,167,56,0.08);
+  }
+
+  #dropzone .big { font-size: 40px; display: block; margin-bottom: 10px; }
+  #dropzone .lead { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
+  #dropzone .sub { font-size: 13px; font-weight: 500; color: #6f6252; margin: 0; }
+
+  /* ── Editor layout ─────────────────────────────────────────── */
+
+  #editor { display: none; }
+  #editor.on { display: grid; grid-template-columns: minmax(0,1fr) 268px; gap: 20px; align-items: start; }
+
+  @media (max-width: 820px) {
+    #editor.on { grid-template-columns: minmax(0,1fr); }
+  }
+
+  #stage {
+    position: relative;
+    margin: 0 auto;
+    touch-action: none;
+    user-select: none;
+    line-height: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(70,60,48,0.06);
+  }
+
+  #view { display: block; width: 100%; height: auto; }
+
+  #crop {
+    position: absolute;
+    box-shadow: 0 0 0 9999px rgba(70,60,48,0.55);
+    outline: 2px solid #F4EBD9;
+    cursor: move;
+  }
+
+  /* rule-of-thirds guides */
+  #crop::before, #crop::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+  #crop::before {
+    border-left: 1px solid #F4EBD9;
+    border-right: 1px solid #F4EBD9;
+    left: 33.333%; right: 33.333%;
+  }
+  #crop::after {
+    border-top: 1px solid #F4EBD9;
+    border-bottom: 1px solid #F4EBD9;
+    top: 33.333%; bottom: 33.333%;
+  }
+
+  .handle {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: #F4EBD9;
+    border: 2px solid #463C30;
+    border-radius: 5px;
+  }
+  .handle[data-handle="nw"] { left: -9px;  top: -9px;    cursor: nwse-resize; }
+  .handle[data-handle="ne"] { right: -9px; top: -9px;    cursor: nesw-resize; }
+  .handle[data-handle="sw"] { left: -9px;  bottom: -9px; cursor: nesw-resize; }
+  .handle[data-handle="se"] { right: -9px; bottom: -9px; cursor: nwse-resize; }
+
+  /* ── Controls ──────────────────────────────────────────────── */
+
+  .side { display: flex; flex-direction: column; gap: 16px; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+
+  label.cap {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #DB7E6E;
+  }
+
+  select, input[type="number"] {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: #463C30;
+    background: #F4EBD9;
+    border: 1px solid rgba(70,60,48,0.18);
+    border-radius: 10px;
+    padding: 9px 11px;
+    width: 100%;
+  }
+
+  input[type="range"] { width: 100%; accent-color: #EDA738; }
+
+  .row { display: flex; gap: 8px; }
+  .row > * { flex: 1; min-width: 0; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .chip {
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    color: #463C30;
+    background: transparent;
+    border: 1px solid rgba(70,60,48,0.22);
+    border-radius: 999px;
+    padding: 6px 11px;
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease;
+  }
+  .chip:hover { border-color: #9DB389; }
+  .chip.on { background: #EDA738; border-color: #EDA738; color: #463C30; }
+
+  button.action {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    color: #463C30;
+    background: #EDA738;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.12s ease, opacity 0.12s ease;
+  }
+  button.action:active { transform: scale(0.98); }
+  button.action.ghost { background: transparent; border: 1px solid rgba(70,60,48,0.22); font-weight: 700; }
+  button.action:disabled { opacity: 0.4; cursor: default; }
+
+  .meta { font-size: 12px; font-weight: 600; color: #6f6252; line-height: 1.5; }
+  .meta strong { color: #463C30; }
+  .meta.warn { color: #b8543f; }
+
+  hr { border: none; border-top: 1px solid rgba(70,60,48,0.12); margin: 2px 0; }
+
+  /* ── Result ────────────────────────────────────────────────── */
+
+  #result { display: none; margin-top: 20px; }
+  #result.on { display: block; }
+
+  #preview {
+    display: block;
+    max-width: 100%;
+    max-height: 260px;
+    border-radius: 12px;
+    background:
+      linear-gradient(45deg, rgba(70,60,48,0.07) 25%, transparent 25%, transparent 75%, rgba(70,60,48,0.07) 75%),
+      linear-gradient(45deg, rgba(70,60,48,0.07) 25%, transparent 25%, transparent 75%, rgba(70,60,48,0.07) 75%),
+      #F4EBD9;
+    background-size: 18px 18px;
+    background-position: 0 0, 9px 9px;
+  }
+
+  textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #463C30;
+    background: #F4EBD9;
+    border: 1px solid rgba(70,60,48,0.18);
+    border-radius: 12px;
+    padding: 11px;
+    width: 100%;
+    height: 118px;
+    resize: vertical;
+  }
+
+  .note {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6f6252;
+    line-height: 1.6;
+    margin: 18px 0 0;
+  }
+  .note code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    background: rgba(70,60,48,0.07);
+    border-radius: 5px;
+    padding: 1px 5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Crop <span class="accent">&amp;</span> Paste</h1>
+    <p class="tagline">Crop a photo, then paste it straight into index.html</p>
+  </header>
+
+  <div class="panel">
+
+    <div id="dropzone">
+      <span class="big">🖼️</span>
+      <p class="lead">Drop a photo here, or click to choose one</p>
+      <p class="sub">PNG, JPEG, WebP, GIF (HEIC in Safari) — nothing leaves your computer</p>
+      <input id="file" type="file" accept="image/*" hidden>
+    </div>
+
+    <div id="editor">
+      <div>
+        <div id="stage">
+          <canvas id="view"></canvas>
+          <div id="crop">
+            <div class="handle" data-handle="nw"></div>
+            <div class="handle" data-handle="ne"></div>
+            <div class="handle" data-handle="sw"></div>
+            <div class="handle" data-handle="se"></div>
+          </div>
+        </div>
+        <p class="meta" style="text-align:center;margin:12px 0 0" id="srcInfo"></p>
+      </div>
+
+      <div class="side">
+        <div class="field">
+          <label class="cap" for="preset">Where it goes</label>
+          <select id="preset">
+            <option value="thumb">Card thumbnail — 16:9</option>
+            <option value="logo">Header logo — square</option>
+            <option value="social">Social preview — 1200×630</option>
+            <option value="free">Free crop</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="cap">Aspect</label>
+          <div class="chips" id="aspects">
+            <button class="chip" data-aspect="free">Free</button>
+            <button class="chip" data-aspect="1">1:1</button>
+            <button class="chip" data-aspect="1.7777777778">16:9</button>
+            <button class="chip" data-aspect="1.3333333333">4:3</button>
+            <button class="chip" data-aspect="0.8">4:5</button>
+            <button class="chip" data-aspect="1.9047619048">OG</button>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="field">
+          <label class="cap" for="outw">Output width (px)</label>
+          <input id="outw" type="number" min="16" max="4000" step="1" value="800">
+        </div>
+
+        <div class="field">
+          <label class="cap" for="format">Format</label>
+          <div class="row">
+            <select id="format">
+              <option value="image/webp">WebP</option>
+              <option value="image/jpeg">JPEG</option>
+              <option value="image/png">PNG</option>
+            </select>
+            <select id="matte">
+              <option value="#F4EBD9">Cream bg</option>
+              <option value="#ffffff">White bg</option>
+              <option value="">Transparent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="cap" for="quality">Quality — <span id="qval">85</span></label>
+          <input id="quality" type="range" min="40" max="100" step="1" value="85">
+        </div>
+
+        <hr>
+
+        <button class="action" id="make">Crop it</button>
+        <button class="action ghost" id="reset">Start over</button>
+      </div>
+    </div>
+
+    <div id="result">
+      <hr style="margin:20px 0">
+      <img id="preview" alt="Cropped preview">
+      <p class="meta" id="outInfo" style="margin:12px 0"></p>
+      <div class="row" style="margin-bottom:12px">
+        <button class="action" id="copy">Copy &lt;img&gt; tag</button>
+        <button class="action ghost" id="download">Download file</button>
+      </div>
+      <textarea id="tag" readonly spellcheck="false"></textarea>
+    </div>
+
+  </div>
+
+  <p class="note">
+    The <code>&lt;img&gt;</code> tag has the picture embedded inside it, so there is no separate
+    file to upload and no path to get wrong. Paste it into <code>index.html</code> where the
+    matching comment is — inside a card for a thumbnail, or just under
+    <code>&lt;header&gt;</code> for the logo.
+  </p>
+
+</div>
+
+<script>
+"use strict";
+
+const MIN = 24;             // smallest crop, in source pixels
+const STAGE_W = 620;
+const STAGE_H = 460;
+
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("file");
+const editor = document.getElementById("editor");
+const stage = document.getElementById("stage");
+const view = document.getElementById("view");
+const cropEl = document.getElementById("crop");
+const srcInfo = document.getElementById("srcInfo");
+const presetSel = document.getElementById("preset");
+const aspectChips = document.getElementById("aspects");
+const outwInput = document.getElementById("outw");
+const formatSel = document.getElementById("format");
+const matteSel = document.getElementById("matte");
+const qualityInput = document.getElementById("quality");
+const qval = document.getElementById("qval");
+const makeBtn = document.getElementById("make");
+const resetBtn = document.getElementById("reset");
+const result = document.getElementById("result");
+const preview = document.getElementById("preview");
+const outInfo = document.getElementById("outInfo");
+const copyBtn = document.getElementById("copy");
+const downloadBtn = document.getElementById("download");
+const tagBox = document.getElementById("tag");
+
+let source = null;                       // { bitmap, w, h, name }
+let crop = { x: 0, y: 0, w: 0, h: 0 };   // source pixels
+let aspect = 16 / 9;
+let scale = 1;                           // source px -> display px
+let lastBlob = null;
+
+const PRESETS = {
+  thumb:  { aspect: 16 / 9,      width: 800,  cls: "card-thumb" },
+  logo:   { aspect: 1,           width: 256,  cls: "logo" },
+  social: { aspect: 1200 / 630,  width: 1200, cls: "" },
+  free:   { aspect: null,        width: 800,  cls: "" },
+};
+
+/* ── Loading ───────────────────────────────────────────────── */
+
+async function decode(file) {
+  // createImageBitmap honours EXIF orientation, so phone photos land upright.
+  if (window.createImageBitmap) {
+    try {
+      return await createImageBitmap(file, { imageOrientation: "from-image" });
+    } catch (e) { /* fall through */ }
+  }
+  const url = URL.createObjectURL(file);
+  try {
+    const img = new Image();
+    await new Promise((res, rej) => {
+      img.onload = res;
+      img.onerror = () => rej(new Error("decode failed"));
+      img.src = url;
+    });
+    return img;
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+}
+
+async function load(file) {
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    alert("That is not an image file.");
+    return;
+  }
+  let bitmap;
+  try {
+    bitmap = await decode(file);
+  } catch (e) {
+    alert("This browser could not read that image. Try exporting it as PNG or JPEG first.");
+    return;
+  }
+  const w = bitmap.width || bitmap.naturalWidth;
+  const h = bitmap.height || bitmap.naturalHeight;
+  source = { bitmap, w, h, name: file.name.replace(/\.[^.]+$/, "") || "image" };
+
+  // A photo saved straight out of a phone is often 4000px wide; nobody needs
+  // that on a landing page, so keep the default output sane.
+  applyPreset(presetSel.value);
+
+  dropzone.style.display = "none";
+  editor.classList.add("on");
+  result.classList.remove("on");
+  layout();
+  srcInfo.textContent = `${file.name} — ${w} × ${h}, ${fmtBytes(file.size)}`;
+}
+
+/* ── Layout ────────────────────────────────────────────────── */
+
+function layout() {
+  if (!source) return;
+  const avail = Math.min(STAGE_W, stage.parentElement.clientWidth || STAGE_W);
+  scale = Math.min(avail / source.w, STAGE_H / source.h, 1);
+  const dw = Math.round(source.w * scale);
+  const dh = Math.round(source.h * scale);
+  view.width = dw;
+  view.height = dh;
+  stage.style.width = dw + "px";
+  stage.style.height = dh + "px";
+  view.getContext("2d").drawImage(source.bitmap, 0, 0, dw, dh);
+  paint();
+}
+
+function paint() {
+  cropEl.style.left = Math.round(crop.x * scale) + "px";
+  cropEl.style.top = Math.round(crop.y * scale) + "px";
+  cropEl.style.width = Math.round(crop.w * scale) + "px";
+  cropEl.style.height = Math.round(crop.h * scale) + "px";
+}
+
+/* ── Crop maths ────────────────────────────────────────────── */
+
+function maxCrop(a) {
+  if (!a) return { x: 0, y: 0, w: source.w, h: source.h };
+  let w = source.w, h = w / a;
+  if (h > source.h) { h = source.h; w = h * a; }
+  return { x: (source.w - w) / 2, y: (source.h - h) / 2, w, h };
+}
+
+function refitToAspect() {
+  if (!source) return;
+  if (!aspect) return;
+  const cx = crop.x + crop.w / 2;
+  const cy = crop.y + crop.h / 2;
+  let w = crop.w, h = w / aspect;
+  if (h > crop.h) { h = crop.h; w = h * aspect; }
+  if (w > source.w) { w = source.w; h = w / aspect; }
+  if (h > source.h) { h = source.h; w = h * aspect; }
+  crop = {
+    x: Math.max(0, Math.min(cx - w / 2, source.w - w)),
+    y: Math.max(0, Math.min(cy - h / 2, source.h - h)),
+    w, h,
+  };
+}
+
+function resize(mode, dx, dy, o) {
+  // The corner opposite the one being dragged stays put.
+  const ax = mode.includes("w") ? o.x + o.w : o.x;
+  const ay = mode.includes("n") ? o.y + o.h : o.y;
+  const sx = mode.includes("w") ? -1 : 1;
+  const sy = mode.includes("n") ? -1 : 1;
+
+  let w = o.w + sx * dx;
+  let h = o.h + sy * dy;
+
+  if (aspect) {
+    if (w / aspect >= h) h = w / aspect; else w = h * aspect;
+  }
+
+  const maxW = sx > 0 ? source.w - ax : ax;
+  const maxH = sy > 0 ? source.h - ay : ay;
+
+  if (w > maxW) { w = maxW; if (aspect) h = w / aspect; }
+  if (h > maxH) { h = maxH; if (aspect) w = h * aspect; }
+  if (w < MIN) { w = MIN; if (aspect) h = w / aspect; }
+  if (h < MIN) { h = MIN; if (aspect) w = h * aspect; }
+  w = Math.min(w, maxW);
+  h = Math.min(h, maxH);
+
+  crop = {
+    x: sx > 0 ? ax : ax - w,
+    y: sy > 0 ? ay : ay - h,
+    w, h,
+  };
+}
+
+/* ── Dragging ──────────────────────────────────────────────── */
+
+let drag = null;
+
+stage.addEventListener("pointerdown", (e) => {
+  if (!source) return;
+  const mode = e.target.dataset.handle || (e.target === cropEl ? "move" : null);
+  if (!mode) return;
+  e.preventDefault();
+  drag = { mode, x: e.clientX, y: e.clientY, orig: { ...crop } };
+  stage.setPointerCapture(e.pointerId);
+});
+
+stage.addEventListener("pointermove", (e) => {
+  if (!drag) return;
+  const dx = (e.clientX - drag.x) / scale;
+  const dy = (e.clientY - drag.y) / scale;
+  if (drag.mode === "move") {
+    crop.x = Math.max(0, Math.min(drag.orig.x + dx, source.w - crop.w));
+    crop.y = Math.max(0, Math.min(drag.orig.y + dy, source.h - crop.h));
+  } else {
+    resize(drag.mode, dx, dy, drag.orig);
+  }
+  paint();
+});
+
+function endDrag(e) {
+  if (!drag) return;
+  drag = null;
+  try { stage.releasePointerCapture(e.pointerId); } catch (err) { /* already gone */ }
+}
+stage.addEventListener("pointerup", endDrag);
+stage.addEventListener("pointercancel", endDrag);
+
+/* ── Controls ──────────────────────────────────────────────── */
+
+function markAspectChip() {
+  for (const chip of aspectChips.children) {
+    const a = chip.dataset.aspect === "free" ? null : parseFloat(chip.dataset.aspect);
+    const on = a === null ? aspect === null
+                          : aspect !== null && Math.abs(a - aspect) < 0.001;
+    chip.classList.toggle("on", on);
+  }
+}
+
+function applyPreset(key) {
+  const p = PRESETS[key];
+  aspect = p.aspect;
+  outwInput.value = source ? Math.min(p.width, source.w) : p.width;
+  if (source) crop = maxCrop(aspect);
+  markAspectChip();
+  paint();
+}
+
+presetSel.addEventListener("change", () => applyPreset(presetSel.value));
+
+aspectChips.addEventListener("click", (e) => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  aspect = chip.dataset.aspect === "free" ? null : parseFloat(chip.dataset.aspect);
+  if (source) { refitToAspect(); paint(); }
+  markAspectChip();
+});
+
+qualityInput.addEventListener("input", () => { qval.textContent = qualityInput.value; });
+
+formatSel.addEventListener("change", () => {
+  // PNG is the only one of the three that can actually keep transparency.
+  const png = formatSel.value === "image/png";
+  qualityInput.disabled = png;
+  if (!png && matteSel.value === "") matteSel.value = "#F4EBD9";
+});
+
+resetBtn.addEventListener("click", () => {
+  source = null;
+  lastBlob = null;
+  editor.classList.remove("on");
+  result.classList.remove("on");
+  dropzone.style.display = "";
+  fileInput.value = "";
+});
+
+/* ── Export ────────────────────────────────────────────────── */
+
+// Halving in steps keeps a big downscale from turning to mush.
+function drawScaled(ctx, bitmap, s, outW, outH) {
+  let cw = Math.round(s.w), ch = Math.round(s.h);
+  let cur = document.createElement("canvas");
+  cur.width = cw; cur.height = ch;
+  cur.getContext("2d").drawImage(bitmap, s.x, s.y, s.w, s.h, 0, 0, cw, ch);
+
+  while (cw / 2 > outW) {
+    const nw = Math.max(outW, Math.round(cw / 2));
+    const nh = Math.max(outH, Math.round(ch / 2));
+    const next = document.createElement("canvas");
+    next.width = nw; next.height = nh;
+    const nctx = next.getContext("2d");
+    nctx.imageSmoothingQuality = "high";
+    nctx.drawImage(cur, 0, 0, nw, nh);
+    cur = next; cw = nw; ch = nh;
+  }
+  ctx.drawImage(cur, 0, 0, outW, outH);
+}
+
+function makeBlob() {
+  const outW = Math.max(16, Math.min(4000, Math.round(Number(outwInput.value) || 800)));
+  const outH = Math.max(1, Math.round(outW * crop.h / crop.w));
+  const format = formatSel.value;
+  const matte = matteSel.value;
+
+  const c = document.createElement("canvas");
+  c.width = outW;
+  c.height = outH;
+  const ctx = c.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  // JPEG and WebP-with-matte need something behind a transparent PNG,
+  // otherwise the see-through parts come out black.
+  if (format !== "image/png" || matte) {
+    ctx.fillStyle = matte || "#F4EBD9";
+    ctx.fillRect(0, 0, outW, outH);
+  }
+
+  drawScaled(ctx, source.bitmap, crop, outW, outH);
+
+  const q = format === "image/png" ? undefined : Number(qualityInput.value) / 100;
+  return new Promise((res) => c.toBlob((b) => res({ blob: b, outW, outH, format }), format, q));
+}
+
+function fmtBytes(n) {
+  return n < 1024 ? n + " B"
+       : n < 1024 * 1024 ? (n / 1024).toFixed(0) + " KB"
+       : (n / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+function blobToDataURL(blob) {
+  return new Promise((res) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.readAsDataURL(blob);
+  });
+}
+
+makeBtn.addEventListener("click", async () => {
+  if (!source) return;
+  makeBtn.disabled = true;
+  makeBtn.textContent = "Cropping…";
+  try {
+    const out = await makeBlob();
+    if (!out.blob) throw new Error("encode failed");
+    lastBlob = out.blob;
+
+    const dataUrl = await blobToDataURL(out.blob);
+    preview.src = dataUrl;
+
+    const cls = PRESETS[presetSel.value].cls;
+    const clsAttr = cls ? ` class="${cls}"` : "";
+    tagBox.value = `<img${clsAttr} src="${dataUrl}" alt="">`;
+
+    const dataBytes = dataUrl.length;
+    outInfo.innerHTML =
+      `<strong>${out.outW} × ${out.outH}</strong> — ${fmtBytes(out.blob.size)} as a file, ` +
+      `${fmtBytes(dataBytes)} once embedded in the tag.`;
+    outInfo.className = dataBytes > 500 * 1024
+      ? "meta warn"
+      : "meta";
+    if (dataBytes > 500 * 1024) {
+      outInfo.innerHTML += ` That is heavy for an embedded tag — drop the output width or the quality, ` +
+                           `or use “Download file” and reference it by filename instead.`;
+    }
+
+    result.classList.add("on");
+    result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch (e) {
+    alert("Could not encode that image. Try a different format.");
+  } finally {
+    makeBtn.disabled = false;
+    makeBtn.textContent = "Crop it";
+  }
+});
+
+copyBtn.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(tagBox.value);
+  } catch (e) {
+    tagBox.select();          // clipboard blocked (file:// in some browsers)
+    document.execCommand("copy");
+  }
+  copyBtn.textContent = "Copied";
+  setTimeout(() => { copyBtn.textContent = "Copy <img> tag"; }, 1400);
+});
+
+downloadBtn.addEventListener("click", () => {
+  if (!lastBlob) return;
+  const ext = { "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png" }[formatSel.value];
+  const url = URL.createObjectURL(lastBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${source.name}-cropped.${ext}`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+/* ── Input plumbing ────────────────────────────────────────── */
+
+dropzone.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", () => load(fileInput.files[0]));
+
+for (const type of ["dragenter", "dragover"]) {
+  dropzone.addEventListener(type, (e) => { e.preventDefault(); dropzone.classList.add("over"); });
+}
+for (const type of ["dragleave", "drop"]) {
+  dropzone.addEventListener(type, (e) => { e.preventDefault(); dropzone.classList.remove("over"); });
+}
+dropzone.addEventListener("drop", (e) => load(e.dataTransfer.files[0]));
+
+window.addEventListener("paste", (e) => {
+  const item = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith("image/"));
+  if (item) load(item.getAsFile());
+});
+
+window.addEventListener("resize", layout);
+
+markAspectChip();
+</script>
+</body>
+</html>
