@@ -240,7 +240,7 @@
 
   <header>
     <h1>Crop <span class="accent">&amp;</span> Paste</h1>
-    <p class="tagline">Crop a photo, then paste it straight into index.html</p>
+    <p class="tagline">Crop a photo to shape before you upload it to the site</p>
   </header>
 
   <div class="panel">
@@ -270,8 +270,8 @@
         <div class="field">
           <label class="cap" for="preset">Where it goes</label>
           <select id="preset">
-            <option value="thumb">Card thumbnail — 16:9</option>
-            <option value="logo">Header logo — square</option>
+            <option value="thumb">Project card — 16:9</option>
+            <option value="logo">Logo / avatar — square</option>
             <option value="social">Social preview — 1200×630</option>
             <option value="free">Free crop</option>
           </select>
@@ -329,8 +329,8 @@
       <img id="preview" alt="Cropped preview">
       <p class="meta" id="outInfo" style="margin:12px 0"></p>
       <div class="row" style="margin-bottom:12px">
-        <button class="action" id="copy">Copy &lt;img&gt; tag</button>
-        <button class="action ghost" id="download">Download file</button>
+        <button class="action" id="download">Download file</button>
+        <button class="action ghost" id="copy">Copy &lt;img&gt; tag</button>
       </div>
       <textarea id="tag" readonly spellcheck="false"></textarea>
     </div>
@@ -338,10 +338,10 @@
   </div>
 
   <p class="note">
-    The <code>&lt;img&gt;</code> tag has the picture embedded inside it, so there is no separate
-    file to upload and no path to get wrong. Paste it into <code>index.html</code> where the
-    matching comment is — inside a card for a thumbnail, or just under
-    <code>&lt;header&gt;</code> for the logo.
+    Project cards on the site are <strong>16:9</strong> and crop from the centre, so a tall phone
+    screenshot loses its top and bottom. Crop it here first, download the file, then upload that
+    through the ✎ button on the card. The <code>&lt;img&gt;</code> tag button is for hand-written
+    HTML elsewhere — it carries the picture embedded inside the tag.
   </p>
 
 </div>
@@ -383,8 +383,8 @@ let scale = 1;                           // source px -> display px
 let lastBlob = null;
 
 const PRESETS = {
-  thumb:  { aspect: 16 / 9,      width: 800,  cls: "card-thumb" },
-  logo:   { aspect: 1,           width: 256,  cls: "logo" },
+  thumb:  { aspect: 16 / 9,      width: 800,  cls: "" },
+  logo:   { aspect: 1,           width: 256,  cls: "" },
   social: { aspect: 1200 / 630,  width: 1200, cls: "" },
   free:   { aspect: null,        width: 800,  cls: "" },
 };
