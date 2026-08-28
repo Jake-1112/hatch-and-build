@@ -850,6 +850,15 @@
   <script src="https://drawing.hatchandbuild.com/socket.io/socket.io.js"></script>
   <script>
     var API = 'https://drawing.hatchandbuild.com';
+
+    // Uploaded photos are written to the API host's disk and stored as a bare
+    // "/hub-images/..." path, so the browser would resolve them against THIS
+    // domain and 404. Anything else (/images/..., data:, http:) is left alone.
+    function imageUrl(src) {
+      if (!src) return '';
+      if (/^(?:https?:|data:|blob:|\/\/)/i.test(src)) return src;
+      return src.indexOf('/hub-images/') === 0 ? API + src : src;
+    }
     var TOKEN_KEY = 'hb_admin_token';
 
     function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
@@ -941,7 +950,7 @@
       return (
         '<a class="card reveal" data-idx="' + idx + '" href="' + escapeHtml(p.link) + '" target="_blank" rel="noopener">' +
           '<button type="button" class="card-edit-btn" data-edit="' + idx + '">✎</button>' +
-          '<div class="' + mediaClass + '"><img src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.title) + '" loading="lazy"></div>' +
+          '<div class="' + mediaClass + '"><img src="' + escapeHtml(imageUrl(p.image)) + '" alt="' + escapeHtml(p.title) + '" loading="lazy"></div>' +
           '<div class="card-body">' +
             '<div class="card-label">Project #' + (idx + 1) + '</div>' +
             '<div class="card-title">' + escapeHtml(p.title) + native + '</div>' +
@@ -999,7 +1008,7 @@
       editDesc.value = p.description || '';
       editLink.value = p.link || '';
       editCta.value = p.cta || '';
-      editPreview.src = p.image || '';
+      editPreview.src = imageUrl(p.image);
       editError.textContent = '';
       editImage.value = '';
       editBackdrop.classList.add('open');
@@ -1249,7 +1258,7 @@
         el.style.animationDelay = (Math.random() * 2) + 's';
 
         var html = '<button type="button" class="wdel" data-del="' + item.id + '">✕</button>';
-        if (item.image) html += '<img src="' + item.image + '" alt="">';
+        if (item.image) html += '<img src="' + imageUrl(item.image) + '" alt="">';
         if (item.message) html += '<div>' + escapeHtml(item.message) + '</div>';
         el.innerHTML = html;
         el.querySelector('.wdel').addEventListener('click', function (e) {
