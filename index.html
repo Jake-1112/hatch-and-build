@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Hatch & Build</title>
+<meta name="description" content="Hatch & Build is a small collection of apps and tools — a real-time drawing wall for parties and events, a Korean-American hair salon platform, a group habit-challenge app, and an all-in-one hub for Korean school teachers.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://hatchandbuild.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hatch & Build">
+<meta property="og:description" content="Ideas hatched, built, and shipped — a small collection of independent apps and tools.">
+<meta property="og:url" content="https://hatchandbuild.com/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307258760592063" crossorigin="anonymous"></script>
 <style>
   * { box-sizing: border-box; }
 
@@ -28,16 +36,8 @@
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(circle at 15% 12%, rgba(237,167,56,0.20), transparent 38%),
-      radial-gradient(circle at 88% 82%, rgba(157,179,137,0.18), transparent 38%);
-    z-index: 0;
-  }
-
-  .dots {
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(rgba(70,60,48,0.10) 3px, transparent 3px);
-    background-size: 44px 44px;
+      radial-gradient(circle at 12% 8%, rgba(237,167,56,0.12), transparent 42%),
+      radial-gradient(circle at 90% 85%, rgba(157,179,137,0.10), transparent 42%);
     z-index: 0;
   }
 
@@ -45,40 +45,25 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 460px;
+    max-width: 560px;
   }
 
   header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
   }
 
   .egg {
-    font-size: 48px;
+    font-size: 44px;
     display: block;
-    margin-bottom: 10px;
-  }
-
-  /* Optional photo slots. Both are opt-in: with no <img> on the page,
-     everything renders exactly as it did before. Crop a picture with
-     tools/crop.html and paste the <img> tag it gives you. */
-
-  .logo {
-    display: block;
-    width: 88px;
-    height: 88px;
-    margin: 0 auto 12px;
-    border-radius: 26px;
-    object-fit: cover;
-    border: 1px solid rgba(70,60,48,0.08);
-    box-shadow: 0 8px 24px rgba(70,60,48,0.12);
+    margin-bottom: 14px;
   }
 
   h1 {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.01em;
-    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin: 0 0 10px;
   }
 
   h1 .accent {
@@ -86,74 +71,479 @@
   }
 
   .tagline {
-    font-size: 15px;
-    font-weight: 600;
-    color: #9a8d76;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: #a89a80;
     margin: 0;
     letter-spacing: 0.01em;
+  }
+
+  .intro {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #7a6d5c;
+    text-align: center;
+    max-width: 460px;
+    margin: 26px auto 28px;
+    font-weight: 400;
+  }
+
+  .story {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #a89a80;
+    text-align: center;
+    max-width: 460px;
+    margin: 0 auto;
+    font-weight: 400;
+  }
+
+  /* Instagram card */
+  .ig-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #fdf2e0, #f6e6cd);
+    border: 1px solid rgba(70,60,48,0.08);
+    border-radius: 18px;
+    padding: 18px 20px;
+    margin-bottom: 36px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+
+  .ig-card:hover {
+    border-color: rgba(70,60,48,0.18);
+  }
+
+  .ig-avatar {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #FBF6EC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 0 0 2px #EDA738, 0 0 0 4px #FBF6EC;
+  }
+
+  .ig-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .ig-handle {
+    font-size: 14.5px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .ig-bio {
+    font-size: 12.5px;
+    color: #7a6d5c;
+    line-height: 1.5;
+  }
+
+  .ig-follow {
+    flex: 0 0 auto;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #fff;
+    background: #463C30;
+    padding: 9px 16px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  h2.section {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #b6a98f;
+    margin: 0 0 16px 2px;
+  }
+
+  /* ---- Live Wall ---- */
+  .wall-wrap {
+    margin-bottom: 40px;
+  }
+
+  .wall-sub {
+    font-size: 12px;
+    color: #b6a98f;
+    margin: 0 0 12px 2px;
+  }
+
+  .wall-stage {
+    position: relative;
+    height: 220px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(160deg, #f4dfa8, #f0c9a0);
+    border: 1px solid rgba(70,60,48,0.08);
+    box-shadow: inset 0 1px 2px rgba(70,60,48,0.06);
+  }
+
+  .wall-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: rgba(70,60,48,0.4);
+    font-weight: 600;
+    text-align: center;
+    padding: 20px;
+    pointer-events: none;
+  }
+
+  .wall-item {
+    position: absolute;
+    max-width: 130px;
+    background: #FBF6EC;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 6px 16px rgba(70,60,48,0.18);
+    font-size: 12px;
+    font-weight: 600;
+    color: #463C30;
+    text-align: center;
+    animation: wall-float 6s ease-in-out infinite, wall-in 0.4s ease;
+    line-height: 1.4;
+  }
+
+  .wall-item img {
+    display: block;
+    width: 100%;
+    max-height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+
+  .wall-item .wdel {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #463C30;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    border: 2px solid #FBF6EC;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  body.admin-mode .wall-item .wdel {
+    display: flex;
+  }
+
+  @keyframes wall-in {
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes wall-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .composer {
+    margin-top: 12px;
+    background: #FBF6EC;
+    border: 1px solid rgba(70,60,48,0.07);
+    border-radius: 14px;
+    padding: 10px;
+  }
+
+  .composer-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .composer-row input[type="text"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 1px solid rgba(70,60,48,0.15);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    background: #fff;
+    color: #463C30;
+    outline: none;
+  }
+
+  .composer-row input[type="text"]:focus {
+    border-color: #EDA738;
+  }
+
+  .composer-btn {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(70,60,48,0.12);
+    background: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .composer-btn.active {
+    background: #EDA738;
+    border-color: #EDA738;
+  }
+
+  .composer-send {
+    flex: 0 0 auto;
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: none;
+    background: #463C30;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .composer-send:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .draw-panel {
+    display: none;
+    margin-top: 8px;
+  }
+
+  .draw-panel.open {
+    display: block;
+  }
+
+  .draw-canvas {
+    width: 100%;
+    height: 140px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid rgba(70,60,48,0.15);
+    touch-action: none;
+    display: block;
+  }
+
+  .draw-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .draw-color {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .draw-color.selected {
+    border-color: #463C30;
+  }
+
+  .draw-clear {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: #a89a80;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .photo-preview {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #7a6d5c;
+  }
+
+  .photo-preview.open {
+    display: flex;
+  }
+
+  .photo-preview img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .photo-preview .remove {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #c99385;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .wall-note {
+    font-size: 11px;
+    color: #b6a98f;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .wall-admin-bar {
+    display: none;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  body.admin-mode .wall-admin-bar {
+    display: flex;
+  }
+
+  .wall-reset-btn {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #c0392b;
+    background: #fdecea;
+    border: 1px solid rgba(192,57,43,0.25);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
   }
 
   .projects {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
   }
 
   .card {
     display: block;
     text-decoration: none;
     color: inherit;
-    background: #f0e4cf;
-    border: 1px solid rgba(70,60,48,0.08);
-    border-radius: 20px;
-    padding: 22px 24px;
-    box-shadow: 0 10px 30px rgba(70,60,48,0.08);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    background: #FBF6EC;
+    border: 1px solid rgba(70,60,48,0.07);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(70,60,48,0.04);
+    transition: border-color 0.15s ease, transform 0.15s ease, opacity 0.5s ease, transform 0.5s ease;
+    position: relative;
+  }
+
+  .card.reveal {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .card.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .card:hover {
+    border-color: rgba(70,60,48,0.16);
   }
 
   .card:active {
-    transform: scale(0.98);
+    transform: scale(0.99);
   }
 
-  .card-thumb {
-    display: block;
+  .card-media {
     width: 100%;
     aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #eee1c9;
+    position: relative;
+  }
+
+  .card-media img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 14px;
-    background: rgba(70,60,48,0.06);
+    display: block;
+  }
+
+  .card-media.naks {
+    background: linear-gradient(135deg, #1d3f9e, #2c56c9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-media.naks img {
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #fff;
+    padding: 6px;
+  }
+
+  .card-body {
+    padding: 20px 22px 22px;
   }
 
   .card-label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #DB7E6E;
-    margin-bottom: 6px;
+    color: #c99385;
+    margin-bottom: 8px;
   }
 
   .card-title {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 4px;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 6px;
     letter-spacing: -0.01em;
+  }
+
+  .card-title .native {
+    font-size: 14px;
+    font-weight: 600;
+    color: #9a8d76;
+    margin-left: 6px;
   }
 
   .card-desc {
     font-size: 14px;
-    font-weight: 500;
-    color: #6f6252;
-    margin-bottom: 14px;
+    font-weight: 400;
+    color: #85795f;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    white-space: pre-line;
   }
 
   .card-cta {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 13.5px;
+    font-weight: 600;
     color: #463C30;
   }
 
@@ -166,84 +556,769 @@
     transform: translateX(3px);
   }
 
-  .card.coming-soon {
-    background: transparent;
-    border: 1.5px dashed rgba(70,60,48,0.22);
-    box-shadow: none;
-    text-align: center;
-    padding: 24px;
+  .card-edit-btn {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(70,60,48,0.75);
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
   }
 
-  .card.coming-soon .card-title {
-    color: #9a8d76;
-    font-size: 15px;
-    margin: 0;
+  body.admin-mode .card-edit-btn {
+    display: flex;
   }
 
   footer {
     text-align: center;
-    margin-top: 44px;
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(70,60,48,0.08);
+  }
+
+  footer .links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
   }
 
   footer a {
-    color: #9a8d76;
+    color: #a89a80;
     text-decoration: none;
     font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  footer a:hover {
+    color: #6f6252;
+  }
+
+  footer .copyright {
+    color: #c4b89f;
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+
+  footer .admin-link {
+    font-size: 11px;
+    color: #d8cdb6;
+  }
+
+  /* ---- Admin modal / edit panel ---- */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(70,60,48,0.45);
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-backdrop.open {
+    display: flex;
+  }
+
+  .modal {
+    background: #FBF6EC;
+    border-radius: 18px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+
+  .modal h3 {
+    margin: 0 0 16px;
+    font-size: 17px;
+  }
+
+  .modal label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #a89a80;
+    margin: 14px 0 5px;
+  }
+
+  .modal input[type="text"],
+  .modal input[type="password"],
+  .modal textarea {
+    width: 100%;
+    border: 1px solid rgba(70,60,48,0.15);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    background: #fff;
+    color: #463C30;
+    outline: none;
+    resize: vertical;
+  }
+
+  .modal input:focus, .modal textarea:focus {
+    border-color: #EDA738;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .modal-btn {
+    flex: 1 1 auto;
+    padding: 11px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+  }
+
+  .modal-btn.primary {
+    background: #463C30;
+    color: #fff;
+  }
+
+  .modal-btn.secondary {
+    background: #eee1c9;
+    color: #463C30;
+  }
+
+  .modal-error {
+    color: #c0392b;
+    font-size: 12px;
+    margin-top: 8px;
+    min-height: 14px;
+  }
+
+  .modal-preview {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-top: 6px;
+    background: #eee1c9;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card.reveal { opacity: 1; transform: none; }
+    .wall-item { animation: none; }
   }
 </style>
 </head>
 <body>
   <div class="bg-glow"></div>
-  <div class="dots"></div>
 
   <div class="page">
     <header>
-      <!-- Logo (optional): paste an <img class="logo" ...> tag here, and
-           delete the egg below if you want the photo to replace it. -->
       <span class="egg">🐣</span>
-      <h1>Hatch <span class="accent">&</span> Build</h1>
+      <h1>Hatch <span class="accent">&amp;</span> Build</h1>
       <p class="tagline">Ideas hatched, built, and shipped</p>
     </header>
 
-    <div class="projects">
-      <a class="card" href="https://apps.apple.com/kr/app/gugu-group-challenge/id6788447196" target="_blank" rel="noopener">
-        <!-- Thumbnail (optional): paste an <img class="card-thumb" ...> tag here -->
-        <div class="card-label">Project #1</div>
-        <div class="card-title">GuGu: Group Challenge</div>
-        <div class="card-desc">A group challenge app to build habits with friends</div>
-        <div class="card-cta">Download on the App Store</div>
-      </a>
+    <p class="intro">
+      Hatch &amp; Build is a small collection of independent apps, built one idea at a time. Each project starts
+      as a simple problem worth solving — bringing friends together, helping people find a business they can
+      trust, or making a teacher's week a little easier — and gets shaped into something people can actually use.
+    </p>
 
-      <a class="card" href="https://kids-drawing-wall-1.onrender.com" target="_blank" rel="noopener">
-        <!-- Thumbnail (optional): paste an <img class="card-thumb" ...> tag here -->
-        <div class="card-label">Project #2</div>
-        <div class="card-title">Drawing Playground</div>
-        <div class="card-desc">An online drawing wall made for kids</div>
-        <div class="card-cta">Visit the site</div>
-      </a>
+    <a class="ig-card" href="https://instagram.com/hatchandbuild" target="_blank" rel="noopener">
+      <div class="ig-avatar">🥚</div>
+      <div class="ig-body">
+        <div class="ig-handle">@hatchandbuild</div>
+        <div class="ig-bio">29. No code. Studying theology, not tech. Building solo, from scratch. From egg to ___ — follow the hatch.</div>
+      </div>
+      <div class="ig-follow">Follow</div>
+    </a>
 
-      <a class="card" href="https://dana.hatchandbuild.com" target="_blank" rel="noopener">
-        <!-- Thumbnail (optional): paste an <img class="card-thumb" ...> tag here -->
-        <div class="card-label">Project #3</div>
-        <div class="card-title">DANA</div>
-        <div class="card-desc">Discover & book beauty salons in Dallas and Frisco</div>
-        <div class="card-cta">Visit the site</div>
-      </a>
+    <div class="wall-wrap">
+      <h2 class="section">Live Wall</h2>
+      <p class="wall-sub">Say hi, draw something, or drop a photo — it'll float right here for other visitors to see.</p>
+      <div class="wall-stage" id="wallStage">
+        <div class="wall-empty" id="wallEmpty">Be the first to add something 👋</div>
+      </div>
 
-      <a class="card" href="https://koreanschool.hatchandbuild.com/dashboard" target="_blank" rel="noopener">
-        <!-- Thumbnail (optional): paste an <img class="card-thumb" ...> tag here -->
-        <div class="card-label">Project #4</div>
-        <div class="card-title">NAKS Teacher AI</div>
-        <div class="card-desc">An AI assistant built for Korean school teachers</div>
-        <div class="card-cta">Visit the site</div>
-      </a>
+      <div class="wall-admin-bar">
+        <button type="button" class="wall-reset-btn" id="wallResetBtn">Reset wall</button>
+      </div>
+
+      <div class="composer">
+        <div class="composer-row">
+          <input type="text" id="wallText" maxlength="80" placeholder="Say something…" />
+          <button type="button" class="composer-btn" id="drawToggle" title="Draw">🎨</button>
+          <button type="button" class="composer-btn" id="photoToggle" title="Photo">📷</button>
+          <input type="file" id="photoInput" accept="image/*" style="display:none">
+          <button type="button" class="composer-send" id="wallSend" disabled>Send</button>
+        </div>
+
+        <div class="draw-panel" id="drawPanel">
+          <canvas class="draw-canvas" id="drawCanvas"></canvas>
+          <div class="draw-tools">
+            <button type="button" class="draw-color selected" style="background:#463C30" data-color="#463C30"></button>
+            <button type="button" class="draw-color" style="background:#EDA738" data-color="#EDA738"></button>
+            <button type="button" class="draw-color" style="background:#DB7E6E" data-color="#DB7E6E"></button>
+            <button type="button" class="draw-color" style="background:#6b8f5a" data-color="#6b8f5a"></button>
+            <button type="button" class="draw-color" style="background:#3a6bc9" data-color="#3a6bc9"></button>
+            <button type="button" class="draw-clear" id="drawClear">Clear</button>
+          </div>
+        </div>
+
+        <div class="photo-preview" id="photoPreview">
+          <img id="photoPreviewImg" src="" alt="">
+          <span>Photo attached</span>
+          <button type="button" class="remove" id="photoRemove">Remove</button>
+        </div>
+      </div>
+      <p class="wall-note">Public in real time — kept up until it's reset. Keep it kind. 🥚</p>
     </div>
 
+    <h2 class="section">Projects</h2>
+    <div class="projects" id="projectsList"><!-- rendered by JS from /api/hub/projects --></div>
+
+    <p class="story">
+      I'm not a developer by trade — I'm studying theology, not computer science. There's no team and no funding
+      behind any of this, just an idea, a laptop, and a lot of trial and error. Every project below started as
+      something I wished already existed, so I taught myself enough to build it. Still very much a work in
+      progress — from egg to something, one hatch at a time.
+    </p>
+
     <footer>
-      <a href="https://instagram.com/hatchandbuild" target="_blank" rel="noopener">Follow @hatchandbuild on Instagram</a>
+      <div class="links">
+        <a href="https://instagram.com/hatchandbuild" target="_blank" rel="noopener">Instagram</a>
+        <a href="mailto:hatchandbuild@gmail.com">Email</a>
+      </div>
+      <div class="copyright">&copy; 2026 Hatch &amp; Build</div>
+      <a href="#" class="admin-link" id="adminLink">Admin</a>
     </footer>
   </div>
+
+  <!-- Login modal -->
+  <div class="modal-backdrop" id="loginBackdrop">
+    <div class="modal">
+      <h3>Admin login</h3>
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••">
+      <div class="modal-error" id="loginError"></div>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn secondary" id="loginCancel">Cancel</button>
+        <button type="button" class="modal-btn primary" id="loginSubmit">Log in</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit project modal -->
+  <div class="modal-backdrop" id="editBackdrop">
+    <div class="modal">
+      <h3>Edit project</h3>
+      <label for="editTitle">Title</label>
+      <input type="text" id="editTitle" maxlength="60">
+      <label for="editNative">Native name (optional)</label>
+      <input type="text" id="editNative" maxlength="30">
+      <label for="editDesc">Description</label>
+      <textarea id="editDesc" rows="4" maxlength="300"></textarea>
+      <label for="editLink">Link</label>
+      <input type="text" id="editLink" maxlength="300">
+      <label for="editCta">Button text</label>
+      <input type="text" id="editCta" maxlength="40">
+      <label for="editImage">Photo</label>
+      <img class="modal-preview" id="editPreview" src="" alt="">
+      <input type="file" id="editImage" accept="image/*">
+      <div class="modal-error" id="editError"></div>
+      <div class="modal-actions">
+        <button type="button" class="modal-btn secondary" id="editCancel">Cancel</button>
+        <button type="button" class="modal-btn primary" id="editSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://drawing.hatchandbuild.com/socket.io/socket.io.js"></script>
+  <script>
+    var API = 'https://drawing.hatchandbuild.com';
+    var TOKEN_KEY = 'hb_admin_token';
+
+    function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+    function setToken(t) { if (t) localStorage.setItem(TOKEN_KEY, t); else localStorage.removeItem(TOKEN_KEY); }
+    function authHeaders() {
+      var h = { 'Content-Type': 'application/json' };
+      var t = getToken();
+      if (t) h['Authorization'] = 'Bearer ' + t;
+      return h;
+    }
+
+    function escapeHtml(s) {
+      var d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    // =====================================================================
+    // Admin auth
+    // =====================================================================
+    var adminLink = document.getElementById('adminLink');
+    var loginBackdrop = document.getElementById('loginBackdrop');
+    var loginPassword = document.getElementById('loginPassword');
+    var loginError = document.getElementById('loginError');
+
+    function setAdminMode(on) {
+      document.body.classList.toggle('admin-mode', on);
+      adminLink.textContent = on ? 'Log out' : 'Admin';
+    }
+
+    function checkAdmin() {
+      var t = getToken();
+      if (!t) { setAdminMode(false); return; }
+      fetch(API + '/api/admin/me', { headers: authHeaders() })
+        .then(function (r) { setAdminMode(r.ok); if (!r.ok) setToken(''); })
+        .catch(function () { setAdminMode(false); });
+    }
+
+    adminLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (document.body.classList.contains('admin-mode')) {
+        fetch(API + '/api/admin/logout', { method: 'POST', headers: authHeaders() }).catch(function () {});
+        setToken('');
+        setAdminMode(false);
+      } else {
+        loginError.textContent = '';
+        loginPassword.value = '';
+        loginBackdrop.classList.add('open');
+        loginPassword.focus();
+      }
+    });
+
+    document.getElementById('loginCancel').addEventListener('click', function () {
+      loginBackdrop.classList.remove('open');
+    });
+
+    function doLogin() {
+      fetch(API + '/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: loginPassword.value })
+      })
+        .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+        .then(function (res) {
+          if (!res.ok) {
+            loginError.textContent = 'Wrong password.';
+            return;
+          }
+          setToken(res.data.token);
+          setAdminMode(true);
+          loginBackdrop.classList.remove('open');
+        })
+        .catch(function () { loginError.textContent = 'Something went wrong. Try again.'; });
+    }
+    document.getElementById('loginSubmit').addEventListener('click', doLogin);
+    loginPassword.addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+
+    checkAdmin();
+
+    // =====================================================================
+    // Projects: fetch + render + admin edit
+    // =====================================================================
+    var projectsList = document.getElementById('projectsList');
+    var projectsData = [];
+
+    function projectCardHtml(p, idx) {
+      var mediaClass = /naks-logo/.test(p.image) ? 'card-media naks' : 'card-media';
+      var native = p.native ? '<span class="native">' + escapeHtml(p.native) + '</span>' : '';
+      return (
+        '<a class="card reveal" data-idx="' + idx + '" href="' + escapeHtml(p.link) + '" target="_blank" rel="noopener">' +
+          '<button type="button" class="card-edit-btn" data-edit="' + idx + '">✎</button>' +
+          '<div class="' + mediaClass + '"><img src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.title) + '" loading="lazy"></div>' +
+          '<div class="card-body">' +
+            '<div class="card-label">Project #' + (idx + 1) + '</div>' +
+            '<div class="card-title">' + escapeHtml(p.title) + native + '</div>' +
+            '<div class="card-desc">' + escapeHtml(p.description) + '</div>' +
+            '<div class="card-cta">' + escapeHtml(p.cta || 'Visit the site') + '</div>' +
+          '</div>' +
+        '</a>'
+      );
+    }
+
+    function renderProjects() {
+      projectsList.innerHTML = projectsData.map(projectCardHtml).join('');
+      setupReveal();
+      projectsList.querySelectorAll('.card-edit-btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          openEditModal(Number(btn.getAttribute('data-edit')));
+        });
+      });
+    }
+
+    function loadProjects() {
+      fetch(API + '/api/hub/projects')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (Array.isArray(data.projects) && data.projects.length) {
+            projectsData = data.projects;
+            renderProjects();
+          }
+        })
+        .catch(function () { /* keep whatever was already rendered */ });
+    }
+    loadProjects();
+
+    // ---- edit modal ----
+    var editBackdrop = document.getElementById('editBackdrop');
+    var editTitle = document.getElementById('editTitle');
+    var editNative = document.getElementById('editNative');
+    var editDesc = document.getElementById('editDesc');
+    var editLink = document.getElementById('editLink');
+    var editCta = document.getElementById('editCta');
+    var editImage = document.getElementById('editImage');
+    var editPreview = document.getElementById('editPreview');
+    var editError = document.getElementById('editError');
+    var editingIdx = null;
+    var pendingProjectImage = null;
+
+    function openEditModal(idx) {
+      editingIdx = idx;
+      pendingProjectImage = null;
+      var p = projectsData[idx];
+      editTitle.value = p.title || '';
+      editNative.value = p.native || '';
+      editDesc.value = p.description || '';
+      editLink.value = p.link || '';
+      editCta.value = p.cta || '';
+      editPreview.src = p.image || '';
+      editError.textContent = '';
+      editImage.value = '';
+      editBackdrop.classList.add('open');
+    }
+
+    document.getElementById('editCancel').addEventListener('click', function () {
+      editBackdrop.classList.remove('open');
+    });
+
+    editImage.addEventListener('change', function () {
+      var file = editImage.files[0];
+      if (!file) return;
+      if (file.size > 3 * 1024 * 1024) {
+        editError.textContent = 'Photo is too large (max 3MB).';
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var img = new Image();
+        img.onload = function () {
+          var maxDim = 1000;
+          var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          var w = Math.round(img.width * scale);
+          var h = Math.round(img.height * scale);
+          var c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          pendingProjectImage = c.toDataURL('image/jpeg', 0.86);
+          editPreview.src = pendingProjectImage;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('editSave').addEventListener('click', function () {
+      editError.textContent = '';
+      var body = {
+        title: editTitle.value.trim(),
+        native: editNative.value.trim(),
+        description: editDesc.value.trim(),
+        link: editLink.value.trim(),
+        cta: editCta.value.trim()
+      };
+      fetch(API + '/api/admin/projects/' + editingIdx, {
+        method: 'PUT',
+        headers: authHeaders(),
+        body: JSON.stringify(body)
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok) { editError.textContent = 'Could not save. Try logging in again.'; return null; }
+          if (!pendingProjectImage) return res.d;
+          return fetch(API + '/api/admin/projects/' + editingIdx + '/image', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ image: pendingProjectImage })
+          }).then(function (r2) { return r2.json(); });
+        })
+        .then(function (data) {
+          if (!data) return;
+          projectsData = data.projects;
+          renderProjects();
+          editBackdrop.classList.remove('open');
+        })
+        .catch(function () { editError.textContent = 'Something went wrong. Try again.'; });
+    });
+
+    // =====================================================================
+    // Scroll reveal for project cards
+    // =====================================================================
+    function setupReveal() {
+      var cards = document.querySelectorAll('.card.reveal:not(.reveal-bound)');
+      if (!('IntersectionObserver' in window)) {
+        cards.forEach(function (c) { c.classList.add('visible'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      cards.forEach(function (c) { c.classList.add('reveal-bound'); obs.observe(c); });
+    }
+
+    // =====================================================================
+    // Live Wall: persistent, shared, floats until an admin resets it
+    // =====================================================================
+    (function () {
+      var stage = document.getElementById('wallStage');
+      var empty = document.getElementById('wallEmpty');
+      var textInput = document.getElementById('wallText');
+      var sendBtn = document.getElementById('wallSend');
+      var drawToggle = document.getElementById('drawToggle');
+      var photoToggle = document.getElementById('photoToggle');
+      var photoInput = document.getElementById('photoInput');
+      var drawPanel = document.getElementById('drawPanel');
+      var canvas = document.getElementById('drawCanvas');
+      var drawClearBtn = document.getElementById('drawClear');
+      var photoPreview = document.getElementById('photoPreview');
+      var photoPreviewImg = document.getElementById('photoPreviewImg');
+      var photoRemoveBtn = document.getElementById('photoRemove');
+      var wallResetBtn = document.getElementById('wallResetBtn');
+
+      var MAX_VISIBLE = 14;
+      var pendingImage = null;
+      var ctx = null;
+      var drawing = false;
+      var currentColor = '#463C30';
+      var last = null;
+
+      function sizeCanvas() {
+        var rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * 2;
+        canvas.height = rect.height * 2;
+        ctx = canvas.getContext('2d');
+        ctx.scale(2, 2);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
+
+      function updateSendState() {
+        var hasText = textInput.value.trim().length > 0;
+        sendBtn.disabled = !hasText && !pendingImage;
+      }
+
+      drawToggle.addEventListener('click', function () {
+        var opening = !drawPanel.classList.contains('open');
+        drawPanel.classList.toggle('open');
+        drawToggle.classList.toggle('active', opening);
+        if (opening) {
+          photoPreview.classList.remove('open');
+          photoToggle.classList.remove('active');
+          setTimeout(sizeCanvas, 0);
+        }
+      });
+
+      canvas.addEventListener('pointerdown', function (e) {
+        drawing = true;
+        var rect = canvas.getBoundingClientRect();
+        last = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      });
+      canvas.addEventListener('pointermove', function (e) {
+        if (!drawing || !ctx) return;
+        var rect = canvas.getBoundingClientRect();
+        var pt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(last.x, last.y);
+        ctx.lineTo(pt.x, pt.y);
+        ctx.stroke();
+        last = pt;
+      });
+      ['pointerup', 'pointerleave'].forEach(function (ev) {
+        canvas.addEventListener(ev, function () {
+          if (!drawing) return;
+          drawing = false;
+          pendingImage = canvas.toDataURL('image/png');
+          updateSendState();
+        });
+      });
+
+      document.querySelectorAll('.draw-color').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.draw-color').forEach(function (b) { b.classList.remove('selected'); });
+          btn.classList.add('selected');
+          currentColor = btn.getAttribute('data-color');
+        });
+      });
+
+      drawClearBtn.addEventListener('click', function () {
+        if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (pendingImage && drawPanel.classList.contains('open')) {
+          pendingImage = null;
+          updateSendState();
+        }
+      });
+
+      photoToggle.addEventListener('click', function () { photoInput.click(); });
+
+      photoInput.addEventListener('change', function () {
+        var file = photoInput.files[0];
+        photoInput.value = '';
+        if (!file) return;
+        if (file.size > 3 * 1024 * 1024) {
+          alert('That photo is too large — please pick one under 3MB.');
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var img = new Image();
+          img.onload = function () {
+            var maxDim = 900;
+            var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+            var w = Math.round(img.width * scale);
+            var h = Math.round(img.height * scale);
+            var c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            c.getContext('2d').drawImage(img, 0, 0, w, h);
+            pendingImage = c.toDataURL('image/jpeg', 0.85);
+            photoPreviewImg.src = pendingImage;
+            photoPreview.classList.add('open');
+            photoToggle.classList.add('active');
+            drawPanel.classList.remove('open');
+            drawToggle.classList.remove('active');
+            updateSendState();
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      photoRemoveBtn.addEventListener('click', function () {
+        pendingImage = null;
+        photoPreview.classList.remove('open');
+        photoToggle.classList.remove('active');
+        updateSendState();
+      });
+
+      textInput.addEventListener('input', updateSendState);
+      textInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') sendBtn.click(); });
+
+      function trimToMax() {
+        var items = stage.querySelectorAll('.wall-item');
+        while (items.length > MAX_VISIBLE) {
+          items[0].remove();
+          items = stage.querySelectorAll('.wall-item');
+        }
+      }
+
+      function renderItem(item) {
+        if (stage.querySelector('[data-id="' + item.id + '"]')) return; // avoid duplicates
+        empty.style.display = 'none';
+        var el = document.createElement('div');
+        el.className = 'wall-item';
+        el.setAttribute('data-id', item.id);
+        var stageRect = stage.getBoundingClientRect();
+        var w = 120;
+        var x = Math.max(6, Math.random() * (Math.max(stageRect.width, 260) - w - 6));
+        var y = Math.max(6, Math.random() * (Math.max(stageRect.height, 220) - 70));
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        el.style.animationDelay = (Math.random() * 2) + 's';
+
+        var html = '<button type="button" class="wdel" data-del="' + item.id + '">✕</button>';
+        if (item.image) html += '<img src="' + item.image + '" alt="">';
+        if (item.message) html += '<div>' + escapeHtml(item.message) + '</div>';
+        el.innerHTML = html;
+        el.querySelector('.wdel').addEventListener('click', function (e) {
+          e.stopPropagation();
+          deleteItem(item.id);
+        });
+        stage.appendChild(el);
+        trimToMax();
+      }
+
+      function removeItemEl(id) {
+        var el = stage.querySelector('[data-id="' + id + '"]');
+        if (!el) return;
+        el.style.transition = 'opacity 0.4s ease';
+        el.style.opacity = '0';
+        setTimeout(function () { if (el.parentNode) el.remove(); }, 400);
+        if (!stage.querySelector('.wall-item')) empty.style.display = 'flex';
+      }
+
+      function clearWall() {
+        stage.querySelectorAll('.wall-item').forEach(function (el) { el.remove(); });
+        empty.style.display = 'flex';
+      }
+
+      function deleteItem(id) {
+        fetch(API + '/api/admin/wall/' + id, { method: 'DELETE', headers: authHeaders() }).catch(function () {});
+      }
+
+      wallResetBtn.addEventListener('click', function () {
+        if (!confirm('Clear the entire live wall for everyone?')) return;
+        fetch(API + '/api/admin/wall/reset', { method: 'POST', headers: authHeaders() }).catch(function () {});
+      });
+
+      // Show whatever is already on the wall immediately (before socket connects)
+      fetch(API + '/api/hub/wall')
+        .then(function (r) { return r.json(); })
+        .then(function (data) { (data.items || []).forEach(renderItem); })
+        .catch(function () {});
+
+      if (typeof io === 'function') {
+        var socket = io(API, { transports: ['websocket', 'polling'] });
+        socket.on('connect', function () {
+          socket.emit('joinSession', { sessionId: 'hub', role: 'draw' });
+        });
+        socket.on('wallHistory', function (history) { (history || []).forEach(renderItem); });
+        socket.on('newDrawing', function (item) { renderItem(item); });
+        socket.on('wallItemRemoved', function (info) { if (info && info.id) removeItemEl(info.id); });
+        socket.on('wallCleared', clearWall);
+        socket.on('drawingRejected', function (info) {
+          if (info && info.reason === 'blocked') alert('That message could not be posted — please keep it kind.');
+        });
+
+        sendBtn.addEventListener('click', function () {
+          var message = textInput.value.trim();
+          if (!message && !pendingImage) return;
+          socket.emit('newDrawing', { message: message, image: pendingImage, name: '' });
+          textInput.value = '';
+          pendingImage = null;
+          photoPreview.classList.remove('open');
+          photoToggle.classList.remove('active');
+          drawPanel.classList.remove('open');
+          drawToggle.classList.remove('active');
+          if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+          updateSendState();
+        });
+      } else {
+        sendBtn.disabled = true;
+      }
+    })();
+  </script>
 </body>
 </html>
