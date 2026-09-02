@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The crop tool I had to build — Hatch &amp; Build</title>
+<meta name="description" content="My site was silently cutting the top and bottom off every phone screenshot I uploaded. Fixing it meant learning about aspect ratios, EXIF rotation, and why transparent PNGs turn black.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://hatchandbuild.com/blog/the-crop-tool-i-had-to-build">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307258760592063" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="page">
+    <nav class="site-nav">
+      <a class="brand" href="/">🐣 Hatch <span class="accent">&amp;</span> Build</a>
+      <a href="/about">About</a>
+      <a href="/blog/" class="current">Blog</a>
+      <a href="/contact">Contact</a>
+    </nav>
+
+    <h1>My site was quietly destroying every photo I uploaded</h1>
+    <p class="post-meta">September 2, 2026 · Build log</p>
+
+    <div class="prose">
+      <p>
+        The project cards on my home page each have a photo. For a while, the card for Hangeulmaru —
+        my Korean school app — showed a thin horizontal strip of what appeared to be the middle of a
+        screenshot. No title, no header, no context. Just a sliver.
+      </p>
+      <p>
+        I'd uploaded that photo myself, looked at the result, thought "huh, that's not what I picked,"
+        and moved on. Twice. It took a third upload before I asked the obvious question: where did the
+        rest of my picture go?
+      </p>
+
+      <h2>Aspect ratio, and the thing nobody tells you</h2>
+      <p>
+        The photo box on each card is a 16:9 rectangle — wide and short, like a TV screen. My source
+        image was a screenshot from my phone, which is tall and narrow. Those two shapes are not
+        compatible, and something has to give.
+      </p>
+      <p>
+        What my site did was the standard thing: fill the box, keep the proportions, and cut off
+        whatever hangs outside. Applied to a tall phone screenshot, that means it keeps a horizontal
+        band from the middle and discards the top and bottom entirely. It's the sensible default, it's
+        one line of CSS, and for a tall image it is quietly catastrophic — because the interesting
+        parts of a screenshot are almost always the top and the bottom.
+      </p>
+      <p>
+        Nothing was broken. Nothing errored. The image was uploaded perfectly and displayed exactly as
+        instructed. The software did what I told it, and what I told it was wrong.
+      </p>
+
+      <h2>The version I tried first, which was worse</h2>
+      <p>
+        My first instinct was to make the image fit instead of fill — show the whole picture, letterbox
+        the empty space. That's technically lossless and it looked terrible: a tall screenshot squeezed
+        into a wide box becomes a postage stamp floating in a sea of background, and now every card on
+        the page has a different amount of dead space.
+      </p>
+      <p>
+        The honest realization was that cropping wasn't the problem. <strong>Cropping without being
+        asked</strong> was the problem. Something has to decide which part of a tall photo survives,
+        and the right answer is the person who chose the photo — not a CSS rule, and not me finding out
+        after saving.
+      </p>
+
+      <h2>What I built</h2>
+      <p>
+        Now, when I pick a photo in the editor, the image appears with a 16:9 crop box laid over it.
+        I drag the box to move it, drag the corners to resize it, and the bright area inside the box
+        is <em>exactly</em> what the card will show — no interpretation, no surprise. The crop gets
+        applied when I hit save, so my last adjustment is always the one that counts, and the result
+        is capped at 1200 pixels wide because a card on a web page has no use for a 4000-pixel photo.
+      </p>
+      <p>
+        The feature took an afternoon. Two of the bugs I hit along the way were far more interesting
+        than the feature itself.
+      </p>
+
+      <h3>Bug one: phone photos arrived lying on their side</h3>
+      <p>
+        Some photos loaded into the cropper rotated 90 degrees, even though they were upright
+        everywhere else — in my photo library, in Finder, in every preview I'd ever seen.
+      </p>
+      <p>
+        Here's what I learned. When your phone takes a photo, it doesn't always rotate the pixels to
+        match how you held the camera. Often it stores the pixels in one fixed orientation plus a small
+        note attached to the file that says "display this rotated 90 degrees." That note is called EXIF
+        orientation. Photo apps read the note. My raw canvas code did not, so it drew the pixels as
+        they were literally stored — sideways.
+      </p>
+      <p>
+        The fix was choosing a decoding method that honors the note, so the image lands upright before
+        anything else touches it. But the lesson is the one I keep relearning: <strong>a file is not
+        the same thing as what you see when you open the file.</strong> There's a layer of
+        interpretation in between, and when you write code you sometimes drop below that layer without
+        realizing it.
+      </p>
+
+      <h3>Bug two: transparent logos came out black</h3>
+      <p>
+        A PNG with a transparent background — a logo, say — came out of the cropper with the
+        transparent parts rendered solid black.
+      </p>
+      <p>
+        The reason is that the crop output is saved as JPEG, and JPEG has no concept of transparency.
+        There's no "see-through" value available in the format, so every transparent pixel has to
+        become some actual color. Absent instructions, that color is black.
+      </p>
+      <p>
+        The fix is called matting: paint the canvas with the background color first — in my case the
+        site's cream — then draw the image on top. The transparent areas pick up the cream instead of
+        black, and the logo looks like it's sitting on the page rather than in a hole. One extra step,
+        and it only exists because of a format limitation from 1992.
+      </p>
+
+      <h2>What I took away from it</h2>
+      <ul>
+        <li>
+          <strong>The worst bugs don't announce themselves.</strong> Nothing crashed here. No error
+          appeared. The site just silently made my photos worse, and the only way to catch it was to
+          look carefully at something I'd already decided was working.
+        </li>
+        <li>
+          <strong>"Sensible default" means sensible for the average case.</strong> Center-cropping is
+          fine for a landscape photo and destructive for a phone screenshot. Defaults are a guess about
+          your content, and they're only as good as the guess.
+        </li>
+        <li>
+          <strong>When software must throw information away, let a human choose what.</strong> That's
+          the whole feature. Not clever code — just moving the decision to someone who knows what the
+          picture is of.
+        </li>
+        <li>
+          <strong>Building the tool taught me the thing.</strong> I've looked at a hundred crop
+          interfaces and never once wondered how they worked. One afternoon of building a bad one
+          taught me about aspect ratios, EXIF orientation, and image formats — none of which I went
+          looking for.
+        </li>
+      </ul>
+      <p>
+        I don't have a computer science background, so most of what I know arrived exactly like this:
+        something looked wrong, I refused to accept it, and the explanation turned out to be a real
+        piece of how the web works. The Hangeulmaru card shows the whole screenshot now.
+      </p>
+      <p>
+        More of these in the <a href="/blog/">build log</a>, or on
+        <a href="https://instagram.com/hatchandbuild" target="_blank" rel="noopener">Instagram</a>.
+      </p>
+    </div>
+
+    <footer>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+      <div>&copy; 2026 Hatch &amp; Build</div>
+    </footer>
+  </div>
+</body>
+</html>

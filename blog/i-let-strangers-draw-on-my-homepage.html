@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I let strangers post on my homepage — Hatch &amp; Build</title>
+<meta name="description" content="Putting a public, real-time wall on my own front page meant answering questions I'd avoided: who can post, how long it stays, and what happens when someone posts something awful.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://hatchandbuild.com/blog/i-let-strangers-draw-on-my-homepage">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307258760592063" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="page">
+    <nav class="site-nav">
+      <a class="brand" href="/">🐣 Hatch <span class="accent">&amp;</span> Build</a>
+      <a href="/about">About</a>
+      <a href="/blog/" class="current">Blog</a>
+      <a href="/contact">Contact</a>
+    </nav>
+
+    <h1>I let strangers post on my own homepage</h1>
+    <p class="post-meta">September 2, 2026 · Build log</p>
+
+    <div class="prose">
+      <p>
+        On <a href="/">the front page of this site</a> there's a box called the Live Wall. Anyone who
+        visits can type a message, draw something, or attach a photo, and it appears there — publicly,
+        instantly, for everyone else who visits. No account, no login, no approval step. Right now it
+        has a couple of greetings on it, including a <em>화이팅!</em> from someone I don't know.
+      </p>
+      <p>
+        Several people have asked me why I'd do that on my own front page. It's a fair question. Here's
+        the reasoning, and the parts I hadn't thought through.
+      </p>
+
+      <h2>Why put it on the front page at all</h2>
+      <p>
+        My first project was <a href="https://drawing.hatchandbuild.com" target="_blank" rel="noopener">Drawing
+        Playground</a>, a real-time drawing wall for events. If you land on my site and read the words
+        "real-time drawing wall," you have to imagine what that means, decide whether it sounds
+        interesting, click through, and then find out. That's four steps, and most people quit at step
+        one.
+      </p>
+      <p>
+        A live wall on the page collapses all four. You don't read about the thing. You do the thing,
+        in about eight seconds, and if it's fun you already know. It's the difference between a
+        restaurant describing its bread and putting a piece in front of you.
+      </p>
+      <p>
+        There's a second reason, less strategic. A personal site is usually a monologue — I talk, you
+        read, you leave. The wall makes it slightly less lonely. Somebody was here, and they left a
+        drawing for whoever shows up next.
+      </p>
+
+      <h2>The question I'd been avoiding</h2>
+      <p>
+        I built the wall before I thought carefully about it, which is the honest order of events. It
+        was fun to build, it worked, I shipped it. It was only when I sat down to write a
+        <a href="/privacy">privacy policy</a> — because Google's ad program requires one — that I hit
+        a section I couldn't fill in.
+      </p>
+      <p>
+        The policy was easy right up until the wall. Then: how long is a post kept? Who can see it? Is
+        it linked to the person who posted it? What happens if someone wants theirs removed? I had a
+        working feature and no answers, only vague intentions.
+      </p>
+      <p>
+        That's the thing about writing a privacy policy honestly. You can't finish it without deciding
+        what your software actually does. It's a design document disguised as a legal page.
+      </p>
+
+      <h2>The decisions I ended up making</h2>
+
+      <h3>Public means public, and I say so</h3>
+      <p>
+        Everything on the wall is visible to every visitor the moment it's posted. There's no private
+        mode and no delay. Rather than bury that, there's a line right under the wall that says so
+        plainly — public in real time, kept until it's reset, keep it kind. Someone about to post a
+        photo deserves to know it's about to be on the internet before they tap send, not after.
+      </p>
+
+      <h3>I collect nothing about who posted</h3>
+      <p>
+        No account, no email, no name. I genuinely don't know who wrote <em>화이팅!</em>, and the
+        system has no way to tell me. That's partly a privacy stance and partly a load-bearing design
+        choice: the eight-second experience only works if there's no sign-up, and no sign-up means no
+        identity to store.
+      </p>
+      <p>
+        It also flips the moderation problem. I can't ban a person, because there are no persons. All
+        I can do is remove content.
+      </p>
+
+      <h3>Nothing is permanent</h3>
+      <p>
+        Posts stay up until I reset the wall, and then they're gone. Not archived, not soft-deleted —
+        gone. I could have built a permanent gallery of everything anyone ever posted. I deliberately
+        didn't, because a permanent public archive of anonymous uploads is a much heavier thing to be
+        responsible for than a wall that clears.
+      </p>
+
+      <h3>I keep a delete button, and I say that too</h3>
+      <p>
+        I can remove any individual post, and the privacy policy states that I may and that you can
+        email me to take something down. Some people would call that censorship on a public wall. I
+        think a feature that lets anonymous strangers put images on my personal homepage, with no
+        removal mechanism, is not principled — it's just negligent. The point is that the rule is
+        written down beforehand instead of being invented in a panic.
+      </p>
+
+      <h2>What I'd tell someone building the same thing</h2>
+      <ul>
+        <li>
+          <strong>Write the privacy policy while you design the feature, not after.</strong> Mine
+          found three decisions I hadn't made. It's the cheapest design review available and it costs
+          an hour.
+        </li>
+        <li>
+          <strong>Anonymous plus permanent is the dangerous combination.</strong> Either one alone is
+          manageable. Together they mean anyone can put anything on your site forever. Dropping
+          permanence made anonymity fine.
+        </li>
+        <li>
+          <strong>Say the scary part in the interface.</strong> One sentence under the wall — this is
+          public, right now — does more real good than a paragraph in a policy nobody opens.
+        </li>
+        <li>
+          <strong>Decide your removal rule before you need it.</strong> The first genuinely bad post
+          is a terrible moment to be inventing policy.
+        </li>
+        <li>
+          <strong>Letting people touch the thing beats describing the thing.</strong> If your product
+          is an experience, put a piece of it in front of the visitor instead of a paragraph about it.
+        </li>
+      </ul>
+      <p>
+        The wall is still up, and so far it's been messages like <em>Hello!!!!!</em> and
+        <em>화이팅!</em> from people who had no reason to say anything to me. That was worth the hour
+        of thinking.
+      </p>
+      <p>
+        Go <a href="/">leave something on it</a>, or read the rest of the
+        <a href="/blog/">build log</a>.
+      </p>
+    </div>
+
+    <footer>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+      <div>&copy; 2026 Hatch &amp; Build</div>
+    </footer>
+  </div>
+</body>
+</html>

@@ -48,6 +48,24 @@
     max-width: 560px;
   }
 
+  nav.site-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin: -24px 0 36px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  nav.site-nav a {
+    color: #a89a80;
+    text-decoration: none;
+    padding: 4px 2px;
+  }
+
+  nav.site-nav a:hover { color: #463C30; }
+
   header {
     text-align: center;
     margin-bottom: 32px;
@@ -786,6 +804,12 @@
   <div class="bg-glow"></div>
 
   <div class="page">
+    <nav class="site-nav">
+      <a href="/about">About</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contact">Contact</a>
+    </nav>
+
     <header>
       <span class="egg">🐣</span>
       <h1>Hatch <span class="accent">&amp;</span> Build</h1>
@@ -849,7 +873,49 @@
     </div>
 
     <h2 class="section">Projects</h2>
-    <div class="projects" id="projectsList"><!-- rendered by JS from /api/hub/projects --></div>
+    <!-- Static snapshot of /api/hub/projects so the cards exist without JS
+         (crawlers included). loadProjects() re-renders this list with live
+         data on success and leaves it alone on failure. Keep in sync when
+         projects change. No "reveal" class here: these must be visible
+         before any script runs. -->
+    <div class="projects" id="projectsList">
+      <a class="card" href="https://drawing.hatchandbuild.com" target="_blank" rel="noopener">
+        <div class="card-media"><img src="https://drawing.hatchandbuild.com/hub-images/project-0-1787888257118.jpg" alt="Drawing Playground" loading="lazy"></div>
+        <div class="card-body">
+          <div class="card-label">Project #1</div>
+          <div class="card-title">Drawing Playground</div>
+          <div class="card-desc">A free real-time drawing wall for parties, weddings, and team events. Guests scan a QR code and their drawings float onto the big screen instantly — no app, no sign-up.</div>
+          <div class="card-cta">Visit the site</div>
+        </div>
+      </a>
+      <a class="card" href="https://apps.apple.com/kr/app/gugu-group-challenge/id6788447196" target="_blank" rel="noopener">
+        <div class="card-media"><img src="https://drawing.hatchandbuild.com/hub-images/project-1-1787888246596.jpg" alt="GuGu: Group Challenge App" loading="lazy"></div>
+        <div class="card-body">
+          <div class="card-label">Project #2</div>
+          <div class="card-title">GuGu: Group Challenge App</div>
+          <div class="card-desc">A group challenge app that helps friends build habits together — pick a challenge, invite your group, and keep each other accountable day by day.</div>
+          <div class="card-cta">Download on the App Store</div>
+        </div>
+      </a>
+      <a class="card" href="https://dana.hatchandbuild.com" target="_blank" rel="noopener">
+        <div class="card-media"><img src="https://drawing.hatchandbuild.com/hub-images/project-2-1787888217570.jpg" alt="DANA" loading="lazy"></div>
+        <div class="card-body">
+          <div class="card-label">Project #3</div>
+          <div class="card-title">DANA<span class="native">단아: 한인 미용실 예약</span></div>
+          <div class="card-desc">A Korean-American hair salon platform for the U.S. — helping Korean-Americans across the country discover and book trusted salons, wherever they live.</div>
+          <div class="card-cta">Visit the site</div>
+        </div>
+      </a>
+      <a class="card" href="https://koreanschool.hatchandbuild.com" target="_blank" rel="noopener">
+        <div class="card-media"><img src="https://drawing.hatchandbuild.com/hub-images/project-3-1787887678585.jpg" alt="Hangeulmaru" loading="lazy"></div>
+        <div class="card-body">
+          <div class="card-label">Project #4</div>
+          <div class="card-title">Hangeulmaru<span class="native">한글마루: 한국학교를 위한 모든 것을 한곳에</span></div>
+          <div class="card-desc">Everything a Korean school needs, all in one place. An AI-powered hub built for Korean school teachers to plan lessons, manage classrooms, and get support — one home for the whole school.</div>
+          <div class="card-cta">Visit the site</div>
+        </div>
+      </a>
+    </div>
 
     <p class="story">
       I'm not a developer by trade — I'm studying theology, not computer science. There's no team and no funding
@@ -860,6 +926,10 @@
 
     <footer>
       <div class="links">
+        <a href="/about">About</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy</a>
         <a href="https://instagram.com/hatchandbuild" target="_blank" rel="noopener">Instagram</a>
         <a href="mailto:hatchandbuild@gmail.com">Email</a>
       </div>

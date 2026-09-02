@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google rejected my site six times — Hatch &amp; Build</title>
+<meta name="description" content="Six AdSense rejections in six weeks taught me that my site wasn't a website — it was a business card. What I actually got wrong, and what I changed.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://hatchandbuild.com/blog/adsense-rejected-six-times">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307258760592063" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="page">
+    <nav class="site-nav">
+      <a class="brand" href="/">🐣 Hatch <span class="accent">&amp;</span> Build</a>
+      <a href="/about">About</a>
+      <a href="/blog/" class="current">Blog</a>
+      <a href="/contact">Contact</a>
+    </nav>
+
+    <h1>Google rejected my site six times, and the sixth email finally made sense</h1>
+    <p class="post-meta">September 2, 2026 · Build log</p>
+
+    <div class="prose">
+      <p>
+        Between July 25 and September 1, Google sent me the same email six times. Same subject line
+        every time: <em>Action needed: your AdSense application result.</em> Same polite paragraph
+        saying a few things needed fixing before my site could be approved. Six applications,
+        six rejections, roughly one a week.
+      </p>
+      <p>
+        Here's the embarrassing part: for the first five, I barely changed anything. I'd read the
+        email, decide it was vague, assume the reviewer hadn't looked properly, and hit
+        <em>resubmit</em>. I was treating a rejection like a coin flip. It is not a coin flip. If you
+        submit the same site, you get the same answer, and you can burn six weeks learning that.
+      </p>
+
+      <h2>The email was never actually vague</h2>
+      <p>
+        When I finally sat down and read one properly instead of skimming it, there was a line near
+        the bottom I'd been scrolling past every single time:
+      </p>
+      <blockquote>
+        Issues like low content volume or low content quality are common reasons for non-approval,
+        and they're easy to fix.
+      </blockquote>
+      <p>
+        That's not vague. That's the answer, printed in the email, six times. I just didn't want it to
+        be about my content, because my content was the part I thought was fine.
+      </p>
+
+      <h2>What my site actually was</h2>
+      <p>
+        Hatch &amp; Build had one page. On that page: a header, two short paragraphs about me, a card
+        linking to my Instagram, a live drawing wall, and four cards linking to my four apps. That's
+        it. No other pages existed. I typed <code>/about</code> into the address bar and got a 404.
+        Same for <code>/privacy</code>. Same for everything.
+      </p>
+      <p>
+        In my head this was a website. In Google's terms it's a <em>link page</em> — a site whose main
+        purpose is sending you somewhere else. And Google is explicit that it doesn't approve those.
+        Not as a punishment, but because the deal being offered makes no sense: advertisers pay to
+        reach people reading something, and nobody reads a signpost. There was no page on my site
+        where a visitor would spend ninety seconds. Where exactly was the ad supposed to go?
+      </p>
+      <p>
+        Once I framed it that way, the six rejections stopped feeling arbitrary and started feeling
+        obvious. I'd built a business card and asked to be paid like a magazine.
+      </p>
+
+      <h2>The three things I got wrong</h2>
+
+      <h3>1. My real content wasn't in the page</h3>
+      <p>
+        The four project cards — genuinely the most substantial text on the site — weren't in the HTML
+        at all. They were fetched from my server by JavaScript after the page loaded, and only then
+        drawn onto the screen. In a browser it looks instant, so I never thought about it.
+      </p>
+      <p>
+        But a crawler doesn't have to run your JavaScript, and you don't get to assume it will. There
+        was a real chance the reviewer's crawler saw a nearly empty page with a heading and two
+        paragraphs. I'd hidden my best content behind a loading step and never noticed, because I only
+        ever looked at the site the way a human looks at it.
+      </p>
+      <p>
+        The fix: write the cards into the HTML as plain markup, and let the JavaScript replace them
+        with live data if and when it loads. Visitors see exactly what they saw before. Crawlers now
+        see the text without doing any work. This is the single change I'd make first if I were
+        starting over.
+      </p>
+
+      <h3>2. No privacy policy — on a site collecting drawings from strangers</h3>
+      <p>
+        AdSense requires a privacy policy. I didn't have one, which is bad enough on its own. What
+        made it worse is that my home page has a Live Wall where any visitor can post a message, a
+        drawing, or a photo, publicly, in real time.
+      </p>
+      <p>
+        I'd built a feature that takes content from the public and displays it to the public, and I
+        had written down nothing about it. Not how long it's kept. Not that it's visible to everyone
+        immediately. Not how to ask me to take something down. I'd have told any of that to someone
+        who emailed to ask — but "I would have answered if asked" isn't a privacy policy. Writing the
+        page took an hour, and honestly the useful part wasn't satisfying Google. It was being forced
+        to answer questions about my own feature that I'd never actually answered.
+      </p>
+
+      <h3>3. There was nowhere to go</h3>
+      <p>
+        No navigation, no about page, no contact page, no blog, no sitemap, no robots.txt. Every
+        single link on the site pointed <em>off</em> the site. A visitor's only two options were leave,
+        or draw something. There was no version of my site where a person moved from one page to
+        another, because there was only one page.
+      </p>
+
+      <h2>What I changed</h2>
+      <p>
+        In one afternoon: an <a href="/about">about page</a>, a
+        <a href="/privacy">privacy policy</a>, a <a href="/contact">contact page</a>, this
+        <a href="/blog/">build log</a> with real posts in it, a sitemap and robots.txt, navigation at
+        the top and links in the footer, and the project cards moved into the HTML.
+      </p>
+      <p>
+        None of that is clever. It's the boring furniture of a normal website, and I'd skipped all of
+        it because I was building a link page and didn't know I was building a link page.
+      </p>
+
+      <h2>Where this stands right now</h2>
+      <p>
+        Not approved. I'm writing this the same day I made the changes, and I'm deliberately
+        <em>not</em> resubmitting immediately — the new pages need to exist long enough to be crawled,
+        and one afternoon of writing is a thin blog. The plan is to keep publishing for a few weeks
+        and apply again when there's genuinely something here to read.
+      </p>
+      <p>
+        If it gets rejected a seventh time, that'll be its own post. I'd rather write that one than
+        pretend this ended neatly.
+      </p>
+
+      <h2>If you're stuck in the same loop</h2>
+      <ul>
+        <li>
+          <strong>Read the whole email, including the part that sounds like boilerplate.</strong>
+          Mine contained the actual reason, six times, below the fold.
+        </li>
+        <li>
+          <strong>Don't resubmit without changing something real.</strong> Same site, same answer.
+          I proved this five times so you don't have to.
+        </li>
+        <li>
+          <strong>Ask honestly: is there a page on my site someone would read for a minute?</strong>
+          If not, that's the whole problem, and no amount of resubmitting fixes it.
+        </li>
+        <li>
+          <strong>View your site the way a crawler does.</strong> If your content only appears after
+          JavaScript runs, assume it might not be seen at all.
+        </li>
+        <li>
+          <strong>Traffic isn't the requirement — content is.</strong> I kept assuming I was being
+          rejected for being small. I was being rejected for being empty. Those are different
+          problems with different fixes.
+        </li>
+      </ul>
+      <p>
+        The thing I keep coming back to: I was annoyed at Google for six weeks for correctly
+        describing my website. It really was thin. The email was right and I was the one not reading
+        it.
+      </p>
+      <p>
+        More build-log posts as things break — follow along on
+        <a href="https://instagram.com/hatchandbuild" target="_blank" rel="noopener">Instagram</a>
+        or in the <a href="/blog/">build log</a>.
+      </p>
+    </div>
+
+    <footer>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+      <div>&copy; 2026 Hatch &amp; Build</div>
+    </footer>
+  </div>
+</body>
+</html>

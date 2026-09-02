@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Every photo on my site was broken — Hatch &amp; Build</title>
+<meta name="description" content="A no-code builder's debugging story: uploaded photos 404ing because of relative URLs and two different domains — and what it taught me about how the web works.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://hatchandbuild.com/blog/why-my-photos-404ed">
+<link rel="stylesheet" href="/site.css">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5307258760592063" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="page">
+    <nav class="site-nav">
+      <a class="brand" href="/">🐣 Hatch <span class="accent">&amp;</span> Build</a>
+      <a href="/about">About</a>
+      <a href="/blog/" class="current">Blog</a>
+      <a href="/contact">Contact</a>
+    </nav>
+
+    <h1>Every photo on my site was broken, and the reason taught me how the web works</h1>
+    <p class="post-meta">September 2, 2026 · Build log</p>
+
+    <div class="prose">
+      <p>
+        In late August I gave this site a small upgrade: each project card on the home page got a photo,
+        and I built myself a little admin editor so I could upload and swap those photos without touching
+        any files. I uploaded the first photo, the editor said it saved, I refreshed the page —
+        and got a broken image icon.
+      </p>
+      <p>
+        Then I checked the other cards. Every photo on the site was broken. Not one of them loaded.
+      </p>
+
+      <h2>The confusing part: nothing was missing</h2>
+      <p>
+        If you can't code, this is the kind of bug that makes you want to give up, because every
+        individual piece looks fine. The upload succeeded. The file really existed on the server —
+        I could see it. The page really was asking for the image — I could see the request in the
+        browser's developer tools, returning <code>404 Not Found</code> for a file I knew existed.
+      </p>
+      <p>
+        The browser and the server were both telling the truth. They were just talking about
+        different places.
+      </p>
+
+      <h2>What was actually happening</h2>
+      <p>
+        Hatch &amp; Build isn't one server pretending to be one website — it's two. The page you're
+        reading lives at <code>hatchandbuild.com</code>, which is a plain static site. But the drawing
+        wall and the project data live on a second server at <code>drawing.hatchandbuild.com</code>,
+        and that's also where my new upload feature saved the photos.
+      </p>
+      <p>
+        When a photo was uploaded, the server recorded its location as a <em>relative</em> path —
+        something like <code>/hub-images/project-1.jpg</code>. No domain in front, just the path.
+        And here's the rule I had never learned: <strong>a path without a domain is not an address,
+        it's a fragment of one.</strong> The browser completes it using whatever domain the current
+        page is on.
+      </p>
+      <p>
+        So the photo was sitting at <code>drawing.hatchandbuild.com/hub-images/project-1.jpg</code>,
+        but the page displaying it was on <code>hatchandbuild.com</code> — so the browser politely
+        asked <code>hatchandbuild.com/hub-images/project-1.jpg</code>, a place where no photo has ever
+        existed. Hence: 404, for a file that absolutely existed. Both servers were right. I had simply
+        never told the browser which one to ask.
+      </p>
+
+      <h2>The fix was three lines</h2>
+      <p>
+        Once I understood the problem, the fix was almost insultingly small: before putting an image
+        path into the page, check whether it starts with <code>/hub-images/</code>, and if so, glue the
+        API server's full address onto the front. Paths that are already complete addresses get left
+        alone. Three lines of code, one afternoon of confusion.
+      </p>
+      <p>
+        I also left a comment in the code explaining <em>why</em> those three lines exist — because the
+        version of me who finds this code in six months will not remember, and will be very tempted to
+        "clean it up."
+      </p>
+
+      <h2>What I actually learned</h2>
+      <ul>
+        <li>
+          <strong>A URL has parts, and the parts matter.</strong> Domain, path, and the rules for
+          combining them. I'd been using URLs for twenty years without knowing the browser fills in
+          missing pieces from the current page.
+        </li>
+        <li>
+          <strong>"It works" and "it works from where the user is standing" are different claims.</strong>
+          The upload worked perfectly — from the server's point of view. Nobody was checking the
+          browser's point of view, which is the only one that matters.
+        </li>
+        <li>
+          <strong>The developer tools' Network tab is not just for developers.</strong> Seeing the
+          actual request the browser made — the full URL, the 404 — is what turned a mystery into a
+          fact. If you're building without a coding background, learning to open that tab is worth more
+          than most tutorials.
+        </li>
+      </ul>
+      <p>
+        This is what building without a background actually looks like. Not smooth demos — a broken
+        image icon, an evening of asking "but the file is <em>right there</em>," and then one small
+        rule about how the web works that I'll never forget again.
+      </p>
+      <p>
+        More of these as they happen — and they will happen. Follow along on
+        <a href="https://instagram.com/hatchandbuild" target="_blank" rel="noopener">Instagram</a> or
+        check the <a href="/blog/">build log</a>.
+      </p>
+    </div>
+
+    <footer>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/blog/">Blog</a>
+        <a href="/contact">Contact</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+      <div>&copy; 2026 Hatch &amp; Build</div>
+    </footer>
+  </div>
+</body>
+</html>
